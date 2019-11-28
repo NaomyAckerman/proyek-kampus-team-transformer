@@ -1,0 +1,69 @@
+/*css header*/
+
+.navbar{
+	background-color: pink;
+	font-family: brush;
+}
+
+header a{
+	text-decoration: none;
+	color: white;
+}
+
+nav a{
+	text-decoration: none;
+	color: black;
+}
+
+header .collapse a:hover, header .collapse a:focus{
+	text-decoration: none;
+	color : white;
+}
+
+nav a:hover{
+	text-decoration: none;
+	color: black;
+}
+
+nav i{
+	font-size: 15px;	
+}
+
+.navbar-toggler:hover, .navbar-toggler:focus{
+	outline-style: none;
+	border: none;
+}
+
+/*css content*/
+
+.content .container{
+	width: 100%;
+	margin-top:	20px;
+	margin-bottom: 20px;
+}
+
+
+
+
+
+/*css footer*/
+
+
+footer{
+	background-color: pink;
+	font-family: brush;
+}
+
+footer .btn{
+	font-size: 14px;
+	margin: -10px auto 0px;
+}
+
+footer a{
+	color: black;
+}
+footer a:hover, footer a:focus{
+	color: white;
+	text-decoration: none;
+}
+
