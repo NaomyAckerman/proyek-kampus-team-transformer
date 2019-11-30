@@ -5,6 +5,7 @@ $koneksi = mysqli_connect("localhost","root","","db_avehijup");
 function daftar($data){
 	global $koneksi;
 	$email = htmlspecialchars($data['email']);
+	$username = htmlspecialchars($data['username']);
 	$password1 = htmlspecialchars($data['password1']);
 	$password2 = htmlspecialchars($data['password2']);
 	$alamat = htmlspecialchars($data['alamat']);
@@ -12,7 +13,7 @@ function daftar($data){
 
 	$query = "INSERT INTO user 
 				VALUES
-				('','1','','$email','$password1','$password2','$alamat','$telepon')
+				('','1','$username','$email','$password1','$password2','$alamat','$telepon')
 			";
 
 	mysqli_query($koneksi, $query);

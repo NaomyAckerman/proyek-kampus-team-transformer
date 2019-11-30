@@ -1,25 +1,83 @@
 <?php
+session_start();
 require 'fungsi.php';
-if (isset($_POST['daftar'])) {
-	$pas1 = $_POST['password1'];
-	$pas2 = $_POST['password2'];
-	if ($pas1==$pas2) {
-		if (daftar($_POST)>0) {
-			echo "<script>
-            alert('akun berhasil diregistrasi!!!');
-            document.location.href='#';
-          	</script>";
-          	exit;
+
+if (isset($_SESSION['login'])) {
+    echo "<script> document.location.href='index.php';
+          </script>";
+    	  exit;
+  }
+
+// Proses Login
+
+if (isset($_POST['masuk'])) {
+	$email = $_POST['email'];
+	$pass = $_POST['password'];
+	$result	 = mysqli_query($koneksi,"SELECT * FROM user WHERE email = '$email'");
+	$cek = mysqli_num_rows($result);
+	if ($cek==0) {
+		echo "<script>
+	            alert('Email Salah!!!');
+	            document.location.href='daftarmasuk.php';
+			  </script>";
+	}
+	$data = mysqli_fetch_array($result);
+		if ($pass==$data['password']) {
+			$_SESSION['login'] = true;
+            $_SESSION['email'] = $data['email'];
+            $_SESSION['username'] = $data['nama'];
+            $_SESSION['level'] = $data['aksesID'];
+			if ($_SESSION['level']==1) {
+				echo "<script>
+	        	alert('User Login Berhasil!!!');
+	        		document.location.href='#';
+			      </script>";
+			      exit;
+			}elseif ($_SESSION['level']==2) {
+				echo "<script>
+	        	alert('Admin Login Berhasil!!!');
+	        		document.location.href='#';
+			      </script>";
+			      exit;
+			}
 		}
 		echo "<script>
-            alert('Registrasi Gagal !!!');
-            document.location.href='daftarmasuk.php';
-          </script>";
+	       		alert('Password Salah!!!');
+	           		document.location.href='daftarmasuk.php';
+			  </script>";
+}
+
+// Proses Registrasi
+
+if (isset($_POST['daftar'])) {
+	$email = $_POST['email'];
+	$result = mysqli_query($koneksi,"SELECT * FROM user WHERE email = '$email'");
+	$cek = mysqli_num_rows($result);
+	if ($cek<=0) {
+		$pas1 = $_POST['password1'];
+		$pas2 = $_POST['password2'];
+		if ($pas1==$pas2) {
+			if (daftar($_POST)>0) {
+				echo "<script>
+	            		alert('akun berhasil diregistrasi!!!');
+	            			document.location.href='#';
+			          </script>";
+			          exit;
+				}
+				echo "<script>
+	            		alert('Registrasi Gagal !!!');
+	           			document.location.href='daftarmasuk.php';
+		        	  </script>";
+		}
+		echo "<script>
+	           	alert('password tidak sama!!!');
+	           	document.location.href='daftarmasuk.php';
+	   	      </script>";
 	}
 	echo "<script>
-            alert('password tidak sama!!!');
-            document.location.href='daftarmasuk.php';
-          </script>";
+	        alert('Email Sudah Ada!!!');
+	        document.location.href='daftarmasuk.php';
+	      </script>";
 }
 
 ?>
@@ -43,23 +101,23 @@ if (isset($_POST['daftar'])) {
 <body>
 
 	<!-- navbar -->
-
-<header class="sticky-top">
-	<nav class="navbar  navbar-light bg-light">
+<header>
+		<nav class="navbar  navbar-light bg-light">
 		<div class="container-fluid">
-			<div>
-				<a href=""><i class="fas fa-user mr-3"></i>Assalamualaikum Masuk</a>
+			<div><i class="fas fa-user mr-3"></i>Assalamualaikum
+				<a href="daftarmasuk.php">Masuk</a>
 	  			<span>|</span>
-	  			<a href="">Daftar</a>
+	  			<a href="daftarmasuk.php">Daftar</a>
 	  		</div>
 	  		<div>
-		  		<i class="fas fa-truck mr-3">	Shipping</i>
-		  		<i class="far fa-star mr-3">	Kualitas Pembelian</i>
-				<i class="fab fa-pied-piper-pp mr-3">	Harga Terjangkau</i>
+		  		<i class="fas fa-truck mr-2"></i>Shipping
+		  		<i class="far fa-star mr-2 ml-3"></i>Kualitas Pembelian
+				<i class="fab fa-pied-piper-pp mr-2 ml-3"></i>Harga Terjangkau
 			</div>
 		</div>
 	</nav>
-
+</header>
+<header class="sticky-top">
 	<nav class="navbar navbar-expand-lg navbar-light">
 		<div class="container-fluid">
 
@@ -67,7 +125,7 @@ if (isset($_POST['daftar'])) {
 		      <span><i class="fas fa-bars"></i></span>
 		    </button>
 
-  			<a href="login.html" class="navbar-brand">Ave Hijup</a>
+  			<a href="#" class="navbar-brand">Ave Hijup</a>
 
   			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     			<span><i class="fas fa-ellipsis-v"></i></span>
@@ -134,13 +192,13 @@ if (isset($_POST['daftar'])) {
                 		<h1 class="h4 text-gray-900 mb-4">Login</h1>
 				        <form class="user" method="POST" action="">
 				            <div class="form-group">
-				               	<input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email">
+				               	<input required="" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email" name="email">
 				            </div>
 				            <div class="form-group">
-				               	<input type="password" class="form-control form-control-user" placeholder="Password">
+				               	<input required="" type="password" class="form-control form-control-user" placeholder="Password" name="password">
 				            </div>
 				            <hr>
-				            <button class="btn btn-secondary btn-user btn-block" type="masuk">Login</button>
+				            <button class="btn btn-secondary btn-user btn-block" type="submit" name="masuk">Login</button>
 				            <div class="small">
 				            	<input class="mt-4 mr-2" type="checkbox" id="ingat" name="ingat">
 				            	<label for="ingat">ingat saya</label>
@@ -155,28 +213,30 @@ if (isset($_POST['daftar'])) {
 		                <h1 class="h4 text-gray-900 mb-4">Register</h1>
 			            <form class="user" method="POST" action="">
 			               	<div class="form-group">
-			                  	<input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email" name="email">
+			                  	<input required="" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email" name="email">
+			                </div>
+			                <div class="form-group">
+			                  	<input required="" type="text" class="form-control form-control-user" placeholder="Username" name="username">
 			                </div>
 			               	<div class="form-group row">
 			                  	<div class="col-sm-6 mb-3 mb-sm-0">
-			                    	<input type="password" class="form-control form-control-user" placeholder="password" name="password1">
+			                    	<input required="" type="password" class="form-control form-control-user" placeholder="password" name="password1">
 			                  	</div>
 			                  	<div class="col-sm-6">
-			                    	<input type="password" class="form-control form-control-user" placeholder="Repeat Password" name="password2">
+			                    	<input required="" type="password" class="form-control form-control-user" placeholder="Repeat Password" name="password2">
 			                  	</div>
 			                </div>
 			               	<div class="form-group">
-			                  	<input type="text" class="form-control form-control-user" placeholder="Address" name="alamat">
+			                  	<input required="" type="text" class="form-control form-control-user" placeholder="Address" name="alamat">
 			                </div>
 			                <div class="form-group">
-			                  	<input type="text" class="form-control form-control-user" placeholder="Nomor Telepon" name="telepon">
+			                  	<input required pattern="[0-9]{1,13}" title="Mohon isi dengan maksimal 13 karakter dan hindari penggunaan huruf" type="text" class="form-control form-control-user" placeholder="Nomor Telepon" name="telepon">
 			                </div>
 							<div class="small">
-							    <input class="m-2" type="checkbox" id="setuju" name="setuju">
-						     	<label for="setuju">I agree to the Terms of service
+							    <input required="" class="m-2" type="checkbox" id="setuju" name="setuju">
+						     	<label for="setuju">Berlangganan informasi Ave Hijup
 						     	</label>
-						     	<label class="ml-2 mb-3"><i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-						     	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,</i></label>
+						     	<label class="ml-2 mb-3"><i>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our kebijakan privasi.</i></label>
 							</div>
 			                <button class="btn btn-secondary btn-user btn-block" type="submit" name="daftar">Register</button>
 			            </form>
