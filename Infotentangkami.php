@@ -99,8 +99,24 @@
 	<!-- Konten -->
 
 <div class="content">
-	<div class="container">
-		
+	<div class="container pt-3 pb-3">
+		<h4 class="text-center">Cara Belanja</h4>
+		<p>Berikut Kami lampirkan untuk pemesanan</p>
+		<ol>
+			<dt><li>BROWS</li></dt>
+			<dd>asd</dd>
+			<dt><li>BROWS</li></dt>
+			<dd>asd</dd>
+			<dt><li>BROWS</li></dt>
+			<dd>A. asd</dd>
+			<dd>B. asd</dd>
+			<dt><li>BROWS</li></dt>
+			<dd>asd</dd>
+			<dt><li>BROWS</li></dt>
+			<dd>asd</dd>
+			<dt><li>BROWS</li></dt>
+			<dd>asd</dd>
+		</ol>
 	</div>  	
 </div>
 
