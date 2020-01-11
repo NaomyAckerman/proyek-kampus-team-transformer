@@ -99,7 +99,7 @@
 	<!-- Konten -->
 
 <div class="content">
-	<div class="container pt-3 pb-3" style "color:black">
+	<div class="container pt-3 pb-3" style = "color:black">
 		<h4 class="text-center">Syarat & Ketentuan</h4>
 		<ol>
 			<dt>Ketersediaan Barang</dt>
@@ -122,7 +122,7 @@
 
 	<!-- footer -->
 
-<footer>
+<footer class="fixed-bottom">
 	<div class="container">
 		<div class="row text-center align-items-center">
 			<div class="col-md-4 mt-2 mb-2">

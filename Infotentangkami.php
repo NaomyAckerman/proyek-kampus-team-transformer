@@ -99,7 +99,7 @@
 	<!-- Konten -->
 
 <div class="content">
-	<div class="container pt-3 pb-3" style "color:black">
+	<div class="container pt-3 pb-3" style = "color:black">
 		<h4 class="text-center">Tentang Kami</h4>
 		<p>Tahun 2018 Ave Hijup adalah Suatu Brand yang hadir untuk memenuhi kebutuhan para muslimah dalam memilih hijab yang berkualitas dengan harga terjangkau melalui akun Instagram @ave.hijup
 		Pada tahun 2020 kami akan mengembangkan produk yang kami jual seperti kerudung instan, kerudung motif, mukenah </p>
@@ -115,7 +115,7 @@
 
 	<!-- footer -->
 
-<footer>
+<footer class="fixed-bottom">
 	<div class="container">
 		<div class="row text-center align-items-center">
 			<div class="col-md-4 mt-2 mb-2">
