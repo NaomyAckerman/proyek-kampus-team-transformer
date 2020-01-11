@@ -1,16 +1,32 @@
 <?php 
-require 'fungsi.php';
 session_start();
-if (isset($_SESSION['login'])) {
-	$userID = $_SESSION['userID'];
+require 'fungsi.php';
+
+if (!isset($_SESSION['login'])) {
+	header('location:index.php');
 }
+
+$userID = $_SESSION['userID'];
+
+// query tampilkan produk yang dipilih user
+$keranjang = tampil("SELECT cartID ,GambarProduk, namaproduk, harga, jumlahproduk FROM keranjang, produk WHERE produk.produkID = keranjang.produkID and userID = $userID GROUP BY cartID");
+
+// proses penghitungan produk yg ada dalam keranjang
+foreach ($keranjang as $data) {
+	$jumlah = $data['jumlahproduk'];
+	$total[] = $jumlah;
+	$jumlahharga = $jumlah * $data['harga']; 	
+	$hartot[] = $jumlahharga;
+}
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>Home AVE HIJUP</title>
 	<link href='img/farhan1.png' rel='shortcut icon'>
-	<link rel="stylesheet" type="text/css" href="vendor/css/styleinfo.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/stylek.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/all.css">
 	<script src="vendor/js/jquery-3.4.1.min.js"></script>
@@ -103,17 +119,15 @@ if (isset($_SESSION['login'])) {
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-    			<span>
-    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
-				<?php if (isset($_SESSION['login'])): ?>
 				<?php 
     				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
     				$cek = mysqli_num_rows($result);
     			 ?>
+    			<span>
+    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
     					<?php if (!$cek == 0): ?>
     					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
     					<?php endif ?>
-    			<?php endif ?>
     				</a>
     			</span>
   			</div>	  	
@@ -150,27 +164,79 @@ if (isset($_SESSION['login'])) {
 
 
 	<!-- Konten -->
+<div class="content mt-5">
+	<div class="container">
 
-<div class="content">
-	<div class="container pt-3 pb-3">
-		<h4 class="text-center">PENGIRIMAN</h4>
-		<p>Ave Hijup pada tahun 2018 sampai saat ini pengiriman berpusat di jember.</p>
-		<p>Kami telah survey dan mencoba beberapa ekspedisi yang ada di jember dan kami memutuskan untuk memuaskan seluruh pengiriman melalui ekspedisi JNE dikarenakan distribusi yang cepat sampai dan komplain yang cepat tanggap.</p>
-		<p>Berikut kami lampirkan untuk proses pengiriman : </p>
-		<ol>
-			<dt><li>Pengiriman menggunakan ekspedisi JNE.</li></dt>
-			<dt><li>Pengiriman JNE Reguler dilakukan 1x24 jam setelah kamu melakukan transaksi pembayaran adapun jika ingin dikirim dihari yang sama transfer bisa dilakukan sebelum jam 15.00 WIB.</li></dt>
-			<dt><li>Untuk pengiriman JNE EXPRESS PEMBAYARAN HARUS DILAKUKAN SEBELUM JAM 13.00 WIB apabila pembayar lebih dari jam yang ditentukan maka pengiriman akan tetap dikirim reguler namun pada keesokan harinya.</li></dt>
-			<dt><li>Nomor Resi akan kami kirimkan 1x24 jam setelah barang sukses dikirim.</li></dt>
-			<dt><li>Pertanyaan langsung seputar resi bisa menghubungi customer service kami di WA 083847337988 / IG @ave.hijup</li></dt>
-		</ol>
-	</div>  	
+		<h1 class="text-center mb-4">Keranjang</h1>
+		<div class="row">
+			<div class="col-md">
+				<?php 
+				$numcol = 1;
+				$countrow = 0;
+				$colwidth = 12 / $numcol;
+				?>
+				<div class="row">
+				<?php foreach ($keranjang as $data) { ?>
+						<div class="col-md text-center">
+							<img class="rounded" src="admin/uploaded_files/<?= $data['GambarProduk'] ?>" height="230" width="200">	
+						</div>
+						<div class="col-md mt-3">
+							<h5><?= $data['namaproduk'] ?></h5>
+							<h4>Rp. <?= number_format($data['harga'],2,',','.') ?></h4>
+							<p>Jumlah = <?= $data['jumlahproduk']; ?></p>
+							<a href="hapuskeranjang.php?id=<?=$data['cartID']?>" class="btn btn-danger">Hapus</a>
+						</div>
+				<?php 
+				$countrow++;
+				if ($countrow % $numcol == 0)
+					echo '</div><div class="row"><hr>';
+				}
+				 ?>
+				</div>
+			</div>
+
+			<div class="col-md">
+				<div class="card mt-5">
+					<div class="card-header text-center">
+						<p>Total pembelian</p>
+					</div>
+					<div class="card-body">
+					<?php if(count($keranjang) > 0){ ?>
+						<table >
+							<tr>
+								<th>Jumlah Beli</th>
+								<td></td>
+								<td>:</td>
+								<td></td>
+								<td><?= array_sum($total);?></td>
+							</tr>
+							<tr>
+								<td colspan="5"><hr class="w-100"></td>
+							</tr>
+							<tr>
+								<th>Total Harga</th>
+								<td></td>
+								<td>:</td>
+								<td></td>
+								<td><?= array_sum($hartot);?></td>
+							</tr>
+						</table>
+					<?php } ?>
+						<div class="text-right">
+						<a href="updatestock.php" class="btn btn-danger">Checkout</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<br>
+		<div>
+			<a href="index.php" class="btn btn-info">Lanjut Belanja</a>
+		</div>
+	</div>
 </div>
-
-
 	<!-- Konten akhir -->
-
-
 
 <!-- footer -->
 <footer class="mt-5">
@@ -184,22 +250,21 @@ if (isset($_SESSION['login'])) {
 			<div class="col-md-4 mt-3">
 				<h5>INFORMASI</h5>
 				<hr class="w-50 mt-2">
-				<a class="col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a><br>
-				<a class="col-12" href="infopengiriman.php">Info pengiriman</a><br>
-				<a class="col-12" href="infocarabelanja.php">Cara belanja</a>
+				<a class="btn col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a>
+				<a class="btn col-12" href="infopengiriman.php">Info pengiriman</a>
+				<a class="btn col-12" href="infocarabelanja.php">Cara belanja</a>
 			</div>
 			<div class="col-md-4 mt-2 mb-2">
-				<a href="https://api.instagram.com/v1/self/media/recent?access_token=ACCESS_TOKEN" class="mr-3">
+				<a href="" class="mr-3">
 					<img src="img/ig1.png" width="30" height="30">
 				Ave.Hijup</a>
-				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=&source=&data=">
+				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">
 					<img src="img/wa.png" width="30" height="32">
 				0838-4733-7988</a>
 			</div>
 		</div>
 	</div>
 </footer>
-<!-- footer akhir -->
 
 <!-- modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
