@@ -1,45 +1,25 @@
-<?php
+<?php 
 session_start();
 require 'fungsi.php';
-
-// cek apakah sudah login apa belum
 if (!isset($_SESSION['login'])) {
 	header('location:index.php');
 }else{
 	$userID = $_SESSION['userID'];
 }
 
-
-// menampilkan total pemebelian
-if (isset($_GET['idtransaksi'])) {
-	$idtransaksi = $_GET['idtransaksi'];
-	$konfirmasi = tampil("SELECT * FROM detail_transaksi a, transaksi b, user d WHERE a.transaksiID = b.transaksiID AND b.userID = $userID AND b.transaksiID = $idtransaksi GROUP BY b.transaksiID DESC")[0];
-	$transaksiID = $konfirmasi['transaksiID'];
-}else{
-	$konfirmasi = tampil("SELECT * FROM detail_transaksi a, transaksi b, user d WHERE a.transaksiID = b.transaksiID AND b.userID = $userID GROUP BY b.transaksiID DESC")[0];
-	$transaksiID = $konfirmasi['transaksiID'];
-}
 if (isset($_POST['upload'])) {
-	if (uploadbukti() == 1) {
-		$gambar = $_FILES['uploadbukti']['name'];
-		mysqli_query($koneksi,"UPDATE transaksi SET
-		  		gbrbukti_pembayaran = '$gambar'
-				WHERE transaksiID = $transaksiID");
+	if (tambah($_POST) > 0) {
 		echo "<script>
-			alert('berhasil');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
-			exit();
-	}else{
+	       		alert('Upload Testimoni Berhasil!!!');
+     			document.location.href='testimoni.php';
+	        </script>";
+	          exit;
+		}
 		echo "<script>
-			alert('gagal');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
-	}
+	      		alert('Upload Gagal !!!');
+	   			document.location.href='uploadtesti.php';
+     	  	</script>";
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +27,7 @@ if (isset($_POST['upload'])) {
 <head>
 	<title>Home AVE HIJUP</title>
 	<link href='img/farhan1.png' rel='shortcut icon'>
-	<link rel="stylesheet" type="text/css" href="vendor/css/stylepesanan.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/styleut.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/all.css">
 	<script src="vendor/js/jquery-3.4.1.min.js"></script>
@@ -55,7 +35,7 @@ if (isset($_POST['upload'])) {
   	<script src="vendor/js/bootstrap.js"></script>
   	<script src="vendor/js/all.js"></script>
   	<script src="vendor/js/jquery.js" ></script>
-	<script src="vendor/js/upload.js" ></script>
+  	<script src="vendor/js/upload.js" ></script>
 </head>
 <body>
 
@@ -185,81 +165,28 @@ if (isset($_POST['upload'])) {
 	<!-- navbar akhir -->
 
 	<!-- Konten -->
-<div class="content">
+<div class="content mt-5">
 	<div class="container">
-		<h1 class="text-center">Pesanan Anda</h1>
-		<?php 
-			$detail_transaksi = tampil("SELECT * FROM detail_transaksi a, transaksi b, produk c WHERE a.transaksiID = b.transaksiID AND c.produkID = a.produkID AND a.transaksiID = $transaksiID");
-			foreach ($detail_transaksi as $detail) {
-				$totalproduk[] = $detail['qty'];
-				$subtotal[] = $detail['subtotal'];
-			}
-		?>
-		<div class="card">
-			<div class="card-body">
-				<div class="text-capitalize">
-					<label>Total Produk</label>
-					<label class="float-right"><?= array_sum($totalproduk); ?> Pcs</label>
-				</div>
-				<hr>
-				<div class="text-capitalize">
-					<label>produk</label>
-					<?php foreach ($detail_transaksi as $p): ?>						
-						<label class="float-right">
-							<span class="badge badge-danger"><?= $p['qty']; ?> Pcs</span>
-							<?= $p['namaproduk']; ?>
-							<span class="ml-3">Rp. <?= number_format($p['harga'],2,',','.'); ?></span>
-						</label>
-						<br>
-						<hr>
-					<?php endforeach ?>
-				</div>
-				<div class="text-capitalize">
-					<label>Total Pembayaran</label>
-					<label class="float-right">Rp. <?= number_format(array_sum($subtotal),2,',','.'); ?></label>
-				</div>
-				<hr>
-				<div class="font-weight-bold text-capitalize">
-					<label>pembayaran</label>
-						<ul class="list-unstyled text-uppercase float-right text-justify">
-							<li>bni no.rek : 123456789</li>
-							<li>bri no.rek : 123456789</li>
-							<li>bca no.rek : 123456789</li>
-						</ul>
-						<br><br>
-					<?php if ($konfirmasi['status_pembayaran'] == 0): ?>
-						<label class="alert alert-danger w-100 text-center">Silahkan Unggah Bukti Pembayaran Mendapatkan No Resi</label>
-					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 0):?>				
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
-						<label class="alert alert-danger w-100 text-center">Silahkan Menunggu Proses Pengiriman</label>
-					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 1) :?>
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
-						<label class="alert alert-success w-100 text-center">Pesanan Anda Telah Dikirim</label>
-					<?php endif ?>
-				</div>
-				<form action="" method="POST" enctype="multipart/form-data">
-					<div class="imgUp font-weight-bold">
-						<div>
-							<label>Upload Bukti Pembayaran</label>
-						</div>
-		    			<label class="col-md-3 imagePreview float-left mt-3" for="bukti">
-		    			</label>
-						<div>
-							<label class="btn btn-info float-right">
-								Pilih Gambar<input id="bukti" type="file" class="uploadFile gambar" value="Upload Photo" name="uploadbukti">
-							</label>
-						</div>
-					</div>
-					<br>
-					<button class="btn btn-primary float-right" type="submit" name="upload">Unggah</button>
-				</form>
-			</div>
-		</div>
+		<form method="POST" action="" enctype="multipart/form-data">	
+		<div class="row">
+ 	 		<div class="col-sm-2 imgUp">
+    			<div class="imagePreview">	</div>  			
+					<label class="btn btn-primary">
+					Upload<input type="file" class="uploadFile img gambar" value="Upload Photo" name="gambar">
+					</label>
+		  	</div>
+		  	<div class="col-sm-10">
+		  		<label for="form01">Komentar Testimoni</label>
+		  		<i class="fas fa-heart"></i>
+		  		<textarea class="form-control" id="form01" name="testi"></textarea>
+		  		<br>
+		  		<span><button class="btn btn-info" name="upload">Kirim Testimoni</button></span>
+		  	</div>
+ 		</div>
+		</form>
 	</div>
 </div>
 	<!-- Konten akhir -->
-
-
 
 <!-- footer -->
 <footer class="mt-5">
@@ -273,15 +200,15 @@ if (isset($_POST['upload'])) {
 			<div class="col-md-4 mt-3">
 				<h5>INFORMASI</h5>
 				<hr class="w-50 mt-2">
-				<a class="col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a><br>
-				<a class="col-12" href="infopengiriman.php">Info pengiriman</a><br>
-				<a class="col-12" href="infocarabelanja.php">Cara belanja</a>
+				<a class="btn col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a>
+				<a class="btn col-12" href="infopengiriman.php">Info pengiriman</a>
+				<a class="btn col-12" href="infocarabelanja.php">Cara belanja</a>
 			</div>
 			<div class="col-md-4 mt-2 mb-2">
-				<a href="https://api.instagram.com/v1/self/media/recent?access_token=ACCESS_TOKEN" class="mr-3">
+				<a href="" class="mr-3">
 					<img src="img/ig1.png" width="30" height="30">
 				Ave.Hijup</a>
-				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=&source=&data=">
+				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">
 					<img src="img/wa.png" width="30" height="32">
 				0838-4733-7988</a>
 			</div>
@@ -289,25 +216,5 @@ if (isset($_POST['upload'])) {
 	</div>
 </footer>
 <!-- footer akhir -->
-
-<!-- modal -->
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Apa anda ingin keluar?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">Klik tombol keluar untuk berganti akun.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Tidak</button>
-          <a class="btn btn-primary" href="logout.php">Keluar</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>

@@ -17,6 +17,7 @@ if (isset($_POST['btnLogin'])) {
         // echo "<script>alert('Password Sama')</script>";
         $_SESSION['userID'] = $data['userID'];
         $_SESSION['nama'] = $data['nama'];
+        $_SESSION['level'] = $data['level'];
         header("location: index.php");
       }else {
         header("location: login.php?message=error");    

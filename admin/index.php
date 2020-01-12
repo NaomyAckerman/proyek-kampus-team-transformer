@@ -2,7 +2,11 @@
 session_start();
 include 'config/koneksi.php';
 if(!isset($_SESSION['userID'])){
-  header("location: index.php");
+  header("location: login.php");
+}else{
+  if ($_SESSION['level'] == "User") {
+    header("location: ../index.php");
+  }
 }
 
 ?>

@@ -8,6 +8,11 @@ if (isset($_SESSION['login'])) {
 
 // query menampilkan semua produk
 $produk = tampil("SELECT * FROM produk");
+
+//tekan tombol cari
+if (isset($_POST["cari"])) {
+	$produk = cari($_POST);
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +35,7 @@ $produk = tampil("SELECT * FROM produk");
 <header id="navbar">
 	<nav class="navbar navbar-light bg-light">
 		<div class="container-fluid">
-		<?php if (isset($_SESSION['login'])) :?>
+		<?php if (isset($_SESSION['login'])) : ?>
 			<div class="nav-item dropdown no-arrow">
               <a class="" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               	<?php $user = tampil("SELECT * FROM user WHERE userID = $userID") ?>
@@ -83,7 +88,7 @@ $produk = tampil("SELECT * FROM produk");
     			<span><i class="fas fa-ellipsis-v"></i></span>
   			</button>
 	  		
-	  		<div class="collapse navbar-collapse collapse" id="navbarNav">
+	  		<div class="collapse navbar-collapse" id="navbarNav">
     			<ul class="navbar-nav ml-auto mr-auto">
 					<li class="nav-item dropdown ml-3">
 				        <a class="nav-link warna dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -101,30 +106,18 @@ $produk = tampil("SELECT * FROM produk");
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
-  				<form class="form-inline my-2 my-lg-0 mr-5">
+  				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
-		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
+			      		<button class="my-sm-0" type="submit"><i class="fas fa-search" name="cari"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-    			<span>
-    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
-				<?php if (isset($_SESSION['login'])): ?>
-				<?php 
-    				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
-    				$cek = mysqli_num_rows($result);
-    			 ?>
-    					<?php if (!$cek == 0): ?>
-    					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
-    					<?php endif ?>
-    			<?php endif ?>
-	    				</a>
-	    			</span>
+    			<span><a href="keranjang.php">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
   			</div>	  	
 	  	</div>
 	</nav>
-
+	
 	<div class="collapse" id="navbarToggleExternalContent">
 	   	<div class="bg-dark p-4">
 	   		<div class="container">

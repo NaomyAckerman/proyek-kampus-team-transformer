@@ -7,8 +7,8 @@ if(isset($_POST['btnSimpan'])){
     
     if($password == $repassword){
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-        $insert = mysqli_query($koneksi, "INSERT INTO user (nama , email , user.password, user.level, user_status) 
-        VALUES ('$nama','$email','$password_hashed', 'Admin', '1')");
+        $insert = mysqli_query($koneksi, "INSERT INTO user (nama , email , user.password, user.level, user_status,foto) 
+        VALUES ('$nama','$email','$password_hashed', 'Admin', '1','farhan1.png')");
         if($insert){
             echo "<script>window.location.href='?pages=input_akun&add_stat=1'</script>";
         }else{

@@ -3,40 +3,64 @@ session_start();
 require 'fungsi.php';
 
 if (isset($_SESSION['login'])) {
+	$userID = $_SESSION['userID'];
+}
+
+// cek apakah memiliki cookie
+if (isset($_COOKIE['id']) && isset($_COOKIE['key'])) {
+	$id = $_COOKIE['id'];
+	$key = $_COOKIE['key'];
+	$result = mysqli_query($koneksi,"SELECT name FROM user WHERE userID = $id");
+	$row = mysqli_fetch_assoc($result);
+	if ($key === hash('sha256',$row["nama"])) {
+			$_SESSION['login'] = true;
+		}	
+}
+
+// cek apakah status sudah login
+if (isset($_SESSION['login'])) {
     echo "<script> document.location.href='index.php';
           </script>";
     	  exit;
-  }
+}
+
 
 // Proses Login
-
 if (isset($_POST['masuk'])) {
 	$email = $_POST['email'];
 	$pass = $_POST['password'];
-	$result	 = mysqli_query($koneksi,"SELECT * FROM user WHERE email = '$email'");
+	$query = "SELECT * FROM user WHERE email = '$email'";
+	$result	 = mysqli_query($koneksi,$query);
 	$cek = mysqli_num_rows($result);
-	if ($cek==0) {
-		echo "<script>
-	            alert('Email Salah!!!');
-	            document.location.href='daftarmasuk.php';
-			  </script>";
+	if ($cek == 0) {
+			echo "<script>
+	            	alert('Email Salah!!!');
+	        		document.location.href='daftarmasuk.php';
+			  	</script>";
+		exit;
 	}
 	$data = mysqli_fetch_array($result);
-		if ($pass==$data['password']) {
+		if (password_verify($pass, $data["password"])) {
 			$_SESSION['login'] = true;
-            $_SESSION['email'] = $data['email'];
-            $_SESSION['username'] = $data['nama'];
-            $_SESSION['level'] = $data['aksesID'];
-			if ($_SESSION['level']==1) {
-				echo "<script>
-	        	alert('User Login Berhasil!!!');
-	        		document.location.href='#';
-			      </script>";
-			      exit;
-			}elseif ($_SESSION['level']==2) {
+			$_SESSION['userID'] = $data['userID'];
+            $_SESSION['nama'] = $data['nama'];
+            $_SESSION['level'] = $data['level'];
+            // set cookie (remember me)
+            if (isset($_POST['ingat'])) {
+            	setcookie('id',$data["userID"],time() + 60);
+            	setcookie('key',hash('sha256',$data["nama"]),time() + 60);
+            }
+
+			if ($_SESSION['level']=='Admin') {
 				echo "<script>
 	        	alert('Admin Login Berhasil!!!');
-	        		document.location.href='#';
+	        		document.location.href='admin/';
+			      </script>";
+			      exit;
+			}elseif ($_SESSION['level'] == 'User') {
+				echo "<script>
+	        	alert('User Login Berhasil!!!');
+	        		document.location.href='index.php';
 			      </script>";
 			      exit;
 			}
@@ -47,8 +71,8 @@ if (isset($_POST['masuk'])) {
 			  </script>";
 }
 
-// Proses Registrasi
 
+// Proses Registrasi
 if (isset($_POST['daftar'])) {
 	$email = $_POST['email'];
 	$result = mysqli_query($koneksi,"SELECT * FROM user WHERE email = '$email'");
@@ -60,7 +84,7 @@ if (isset($_POST['daftar'])) {
 			if (daftar($_POST)>0) {
 				echo "<script>
 	            		alert('akun berhasil diregistrasi!!!');
-	            			document.location.href='#';
+	            			document.location.href='daftarmasuk.php';
 			          </script>";
 			          exit;
 				}
@@ -79,45 +103,69 @@ if (isset($_POST['daftar'])) {
 	        document.location.href='daftarmasuk.php';
 	      </script>";
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Account</title>
-	<link rel="stylesheet" type="text/css" href="styledm.css">
-	<link rel="stylesheet" type="text/css" href="assets/dist/css/bootstrap.css">
-	<link rel="stylesheet" type="text/css" href="fontawesome/css/all.css">
- 	<link href="sb-admin-2.min.css" rel="stylesheet">
-	
-	<script type="text/javascript" src="assets/dist/js/bootstrap.min.js"></script>
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+	<title>Home AVE HIJUP</title>
+	<link href='img/farhan1.png' rel='shortcut icon'>
+	<link rel="stylesheet" type="text/css" href="vendor/css/styledm.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/sb-admin-2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/all.css">
+	<script src="vendor/js/jquery-3.4.1.min.js"></script>
+  	<script src="vendor/js/popper.min.js"></script>
+  	<script src="vendor/js/bootstrap.js"></script>
+  	<script src="vendor/js/all.js"></script>
+  	<script type="text/javascript" src="vendor/js/jquery.js" ></script>
 </head>
 <body>
 
-	<!-- navbar -->
-<header>
-		<nav class="navbar  navbar-light bg-light">
+<section>
+<header id="navbar">
+	<nav class="navbar navbar-light bg-light">
 		<div class="container-fluid">
-			<div><i class="fas fa-user mr-3"></i>Assalamualaikum
-				<a href="daftarmasuk.php">Masuk</a>
+		<?php if (isset($_SESSION['login'])) :?>
+			<div class="nav-item dropdown no-arrow">
+              <a class="" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              	<?php $user = tampil("SELECT * FROM user WHERE userID = $userID") ?>
+              	<?php foreach ($user as $u): ?>
+	                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+	                	<img src="admin/uploaded_files/<?= $u['foto']; ?>" width="20" height="20" class="img-fluid rounded-circle">
+	                  <strong class="mx-2">Wellcome</strong><?= $u['nama']; ?>
+	                </span>	
+              	<?php endforeach ?>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="akun.php">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="logout.php" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+              </div>           
+
+		<?php elseif (!isset($_SESSION['login'])) :?>
+			<div>
+				<a href="daftarmasuk.php"><i class="fas fa-user mr-3"></i>Assalamualaikum Masuk</a>
 	  			<span>|</span>
 	  			<a href="daftarmasuk.php">Daftar</a>
 	  		</div>
-	  		<div>
-		  		<i class="fas fa-truck mr-2"></i>Shipping
-		  		<i class="far fa-star mr-2 ml-3"></i>Kualitas Pembelian
-				<i class="fab fa-pied-piper-pp mr-2 ml-3"></i>Harga Terjangkau
+		<?php endif; ?>
+			<div>
+		  		<i class="fas fa-truck mx-2"></i><span>Shipping</span>
+		  		<i class="fas fa-star mx-2"></i><span>Kualitas Pembelian</span>
+				<i class="fas fa-dollar-sign mx-2"></i><span>Harga Terjangkau</span>
 			</div>
 		</div>
 	</nav>
-</header>
-<header class="sticky-top">
+
 	<nav class="navbar navbar-expand-lg navbar-light">
 		<div class="container-fluid">
 
@@ -125,7 +173,7 @@ if (isset($_POST['daftar'])) {
 		      <span><i class="fas fa-bars"></i></span>
 		    </button>
 
-  			<a href="#" class="navbar-brand">Ave Hijup</a>
+  			<a href="index.php" class="navbar-brand">Ave Hijup</a>
 
   			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     			<span><i class="fas fa-ellipsis-v"></i></span>
@@ -133,51 +181,62 @@ if (isset($_POST['daftar'])) {
 	  		
 	  		<div class="collapse navbar-collapse" id="navbarNav">
     			<ul class="navbar-nav ml-auto mr-auto">
-      				<li class="nav-item ml-5">
-        				<a href="#">KATEGORI</a>
-      				</li>
-      				<li class="nav-item ml-5">
-        				<a href="#">BEST SELLER</a>
+					<li class="nav-item dropdown ml-3">
+				        <a class="nav-link warna dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				          KATEGORI
+				        </a>
+					        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					        <?php // query menampilkan kategori
+							$kategori = tampil("SELECT * FROM kategori"); ?>
+					       	<?php foreach ($kategori as $data) { ?>
+					          <a class="dropdown-item mt-2" href="produk.php?kategori=<?= $data['kategoriID']; ?>"><?= $data['namakategori']; ?></a>
+					        <?php } ?>
+					        </div>
+				    </li>
+      				<li class="nav-item ml-3">
+        				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
   				<form class="form-inline my-2 my-lg-0 mr-5">
-		      		<div>
-		      			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			      		<button class="btn btn-secondary my-2 my-sm-0 rounded-pill" type="submit"><i class="fas fa-search"></i></button>
+		      		<div class="wrapper-input">
+		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
+			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
-    			<span><a href="">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-    			<span><a href="">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
-  			</div>
-	  	
+    			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
+    			<span><a href="keranjang.php">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
+  			</div>	  	
 	  	</div>
 	</nav>
+	
 	<div class="collapse" id="navbarToggleExternalContent">
 	   	<div class="bg-dark p-4">
 	   		<div class="container">
 	   			<ul class="navbar-nav ml-auto mr-auto">
       				<li class="nav-item">
-        				<a href="#">Testimoni</a>
+        				<a href="testimoni.php">Testimoni</a>
+      				</li>
+
+      				<li class="nav-item">
+        				<a href="notifikasi.php">Notifikasi</a>
       				</li>
       				<li class="nav-item">
-        				<a href="#">Notifikasi</a>
+        				<a href="konfirmasi.php">Konfirmasi Pembayaran</a>
       				</li>
       				<li class="nav-item">
-        				<a href="#">Konfirmasi Pembayaran</a>
+        				<a href="akun.php">Akun Saya</a>
       				</li>
       				<li class="nav-item">
-        				<a href="#">Akun Saya</a>
-      				</li>
-      				<li class="nav-item">
-        				<a href="#">Tentang Kami</a>
+        				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
     			</ul>
     		</div>
 	   	</div>
 	</div>
 </header>
-
+</section>
 	<!-- navbar akhir -->
+
 
 
 	<!-- Konten -->
@@ -189,13 +248,19 @@ if (isset($_POST['daftar'])) {
         		<div class="row">
           		<div class="col-lg-6 bg-light">
           			<div class="p-5">
-                		<h1 class="h4 text-gray-900 mb-4">Login</h1>
-				        <form class="user" method="POST" action="">
+                		<h1 class="h4 text-gray-900 mb-4">Masuk</h1>
+				        <form class="needs-validation user" novalidate method="POST" action="">
 				            <div class="form-group">
-				               	<input required="" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email" name="email">
+				      			<label for="email">Email *</label>
+				               	<input required type="email" class="form-control form-control-user" id="email" placeholder="Avehijup@gmail.com" name="email">
+				      			<div class="valid-feedback">Benar.</div>
+							    <div class="invalid-feedback">Email tidak boleh kosong.</div>
 				            </div>
 				            <div class="form-group">
-				               	<input required="" type="password" class="form-control form-control-user" placeholder="Password" name="password">
+				            	<label for="pass">Password *</label>
+				               	<input required type="password" class="form-control form-control-user" id="pass" placeholder="Masukkan password" name="password">
+				               	<div class="valid-feedback">Benar.</div>
+							    <div class="invalid-feedback">Password tidak boleh kosong</div>
 				            </div>
 				            <hr>
 				            <button class="btn btn-secondary btn-user btn-block" type="submit" name="masuk">Login</button>
@@ -203,40 +268,69 @@ if (isset($_POST['daftar'])) {
 				            	<input class="mt-4 mr-2" type="checkbox" id="ingat" name="ingat">
 				            	<label for="ingat">ingat saya</label>
 				            </div>
-				            <a href="" class="small">Lupa password?</a>
+				            <a href="lupapassword.php" class="small">Lupa password?</a>
 				        </form>
               		</div>
           		</div>
 
           		<div class="col-lg-6 bg-light">
             		<div class="p-5">
-		                <h1 class="h4 text-gray-900 mb-4">Register</h1>
-			            <form class="user" method="POST" action="">
+		                <h1 class="h4 text-gray-900 mb-4">Daftar Baru</h1>
+			            <form class="needs-validation user" novalidate method="POST" action="">
 			               	<div class="form-group">
-			                  	<input required="" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email" name="email">
+			               		<label for="emailr">Masukkan Email *</label>
+			                  	<input required="" type="email" class="form-control form-control-user" id="emailr" placeholder="Avehijup@gmail.com" name="email">
+			                  	<div class="valid-feedback">Good.</div>
+							    <div class="invalid-feedback">Email tidak boleh kosong.</div>
 			                </div>
 			                <div class="form-group">
-			                  	<input required="" type="text" class="form-control form-control-user" placeholder="Username" name="username">
+			                  	<label for="username">Masukkan Username *</label>
+			                  	<input required="" type="text" class="form-control form-control-user" placeholder="Username" id="username" name="username">
+			                  	<div class="valid-feedback">Benar.</div>
+							    <div class="invalid-feedback">Username tidak boleh kosong.</div>
 			                </div>
 			               	<div class="form-group row">
 			                  	<div class="col-sm-6 mb-3 mb-sm-0">
-			                    	<input required="" type="password" class="form-control form-control-user" placeholder="password" name="password1">
+			               		<label for="pass1">Masukkan Password *</label>
+			                    	<input required="" type="password" id="pass1" class="form-control form-control-user" placeholder="password" name="password1">
+			                    	<div class="valid-feedback">Benar.</div>
+								    <div class="invalid-feedback">Password tidak boleh kosong.</div>
 			                  	</div>
 			                  	<div class="col-sm-6">
-			                    	<input required="" type="password" class="form-control form-control-user" placeholder="Repeat Password" name="password2">
+			                    	<label for="pass2">Masukkan Repeat Password *</label>
+			                    	<input required="" type="password" id="pass2" class="form-control form-control-user" placeholder="Repeat Password" name="password2">
+			                    	<div class="valid-feedback">Benar.</div>
+								    <div class="invalid-feedback">Password tidak boleh kosong.</div>
 			                  	</div>
 			                </div>
 			               	<div class="form-group">
-			                  	<input required="" type="text" class="form-control form-control-user" placeholder="Address" name="alamat">
-			                </div>
+			                    <label for="alamat">Masukkan Alamat *</label>	
+			                  	<input required="" id="alamat" type="text" class="form-control form-control-user" placeholder="Alamat" name="alamat">
+			                    <div class="valid-feedback">Benar.</div>
+								<div class="invalid-feedback">Alamat tidak boleh kosong.</div>
+							</div>
+			               	<div class="form-group">
+			                    <label for="pos">Masukkan Kode Pos *</label>	
+			                  	<input required="" id="pos" type="text" class="form-control form-control-user" placeholder="Kode Pos" name="pos">
+			                    <div class="valid-feedback">Benar.</div>
+								<div class="invalid-feedback">Kode Post tidak boleh kosong.</div>
+							</div>
 			                <div class="form-group">
-			                  	<input required pattern="[0-9]{1,13}" title="Mohon isi dengan maksimal 13 karakter dan hindari penggunaan huruf" type="text" class="form-control form-control-user" placeholder="Nomor Telepon" name="telepon">
+			                    <label for="no">Masukkan No Telepone *</label>       
+			                  	<input required pattern="[0-9]{1,13}" id="no" title="Mohon isi dengan maksimal 13 karakter dan hindari penggunaan huruf" type="text" class="form-control form-control-user" placeholder="Nomor Telepon" name="telepon">
+			                  	<div class="valid-feedback">Benar.</div>
+								<div class="invalid-feedback">Mohon isi dengan maksimal 13 karakter dan hindari penggunaan huruf.</div>
 			                </div>
-							<div class="small">
-							    <input required="" class="m-2" type="checkbox" id="setuju" name="setuju">
-						     	<label for="setuju">Berlangganan informasi Ave Hijup
-						     	</label>
-						     	<label class="ml-2 mb-3"><i>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our kebijakan privasi.</i></label>
+							<div class="small form-group form-check">
+								<label>
+							    <input required="" class=" form-check-input" type="checkbox" id="setuju" name="setuju">
+							    <div class="ml-2">			
+								Kebijakan dan Privasi
+						     	</div>
+						     	<div class="ml-2 valid-feedback">Benar.</div>
+								<div class="ml-2 invalid-feedback">Check Berlangganan informasi AveHijup.</div>
+								</label>
+						     	<label class="ml-2"><i>Data pribadi Anda akan digunakan untuk mendukung pengalaman Anda di seluruh situs web ini, untuk mengelola akses ke akun Anda, dan untuk tujuan lain yang dijelaskan dalam kebijakan privasi kami.</i></label>
 							</div>
 			                <button class="btn btn-secondary btn-user btn-block" type="submit" name="daftar">Register</button>
 			            </form>
@@ -253,9 +347,8 @@ if (isset($_POST['daftar'])) {
 
 
 
-	<!-- footer -->
-
-<footer>
+<!-- footer -->
+<footer class="mt-5">
 	<div class="container">
 		<div class="row text-center align-items-center">
 			<div class="col-md-4 mt-2 mb-2">
@@ -266,23 +359,24 @@ if (isset($_POST['daftar'])) {
 			<div class="col-md-4 mt-3">
 				<h5>INFORMASI</h5>
 				<hr class="w-50 mt-2">
-				<a class="btn col-12" href="">Syarat dan Ketentuan</a>
-				<a class="btn col-12" href="">Info pengiriman</a>
-				<a class="btn col-12" href="">Cara belanja</a>
+				<a class="btn col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a>
+				<a class="btn col-12" href="infopengiriman.php">Info pengiriman</a>
+				<a class="btn col-12" href="infocarabelanja.php">Cara belanja</a>
 			</div>
 			<div class="col-md-4 mt-2 mb-2">
 				<a href="" class="mr-3">
 					<img src="img/ig1.png" width="30" height="30">
 				Ave.Hijup</a>
-				<a href="">
+				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">
 					<img src="img/wa.png" width="30" height="32">
 				0838-4733-7988</a>
 			</div>
 		</div>
 	</div>
 </footer>
-
-	<!-- footer akhir -->
-
+<!-- footer akhir -->
+<script type="text/javascript" src="vendor/js/bootstrap-validate.js"></script>
+<script type="text/javascript" src="vendor/js/jquery.js" ></script>
+<script type="text/javascript" src="vendor/js/validation.js" ></script>
 </body>
 </html>

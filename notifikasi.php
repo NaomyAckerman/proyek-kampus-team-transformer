@@ -1,45 +1,11 @@
-<?php
+<?php 
 session_start();
 require 'fungsi.php';
-
-// cek apakah sudah login apa belum
 if (!isset($_SESSION['login'])) {
 	header('location:index.php');
 }else{
 	$userID = $_SESSION['userID'];
 }
-
-
-// menampilkan total pemebelian
-if (isset($_GET['idtransaksi'])) {
-	$idtransaksi = $_GET['idtransaksi'];
-	$konfirmasi = tampil("SELECT * FROM detail_transaksi a, transaksi b, user d WHERE a.transaksiID = b.transaksiID AND b.userID = $userID AND b.transaksiID = $idtransaksi GROUP BY b.transaksiID DESC")[0];
-	$transaksiID = $konfirmasi['transaksiID'];
-}else{
-	$konfirmasi = tampil("SELECT * FROM detail_transaksi a, transaksi b, user d WHERE a.transaksiID = b.transaksiID AND b.userID = $userID GROUP BY b.transaksiID DESC")[0];
-	$transaksiID = $konfirmasi['transaksiID'];
-}
-if (isset($_POST['upload'])) {
-	if (uploadbukti() == 1) {
-		$gambar = $_FILES['uploadbukti']['name'];
-		mysqli_query($koneksi,"UPDATE transaksi SET
-		  		gbrbukti_pembayaran = '$gambar'
-				WHERE transaksiID = $transaksiID");
-		echo "<script>
-			alert('berhasil');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
-			exit();
-	}else{
-		echo "<script>
-			alert('gagal');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
-	}
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -47,15 +13,13 @@ if (isset($_POST['upload'])) {
 <head>
 	<title>Home AVE HIJUP</title>
 	<link href='img/farhan1.png' rel='shortcut icon'>
-	<link rel="stylesheet" type="text/css" href="vendor/css/stylepesanan.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css/stylen.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="vendor/css/all.css">
 	<script src="vendor/js/jquery-3.4.1.min.js"></script>
   	<script src="vendor/js/popper.min.js"></script>
   	<script src="vendor/js/bootstrap.js"></script>
   	<script src="vendor/js/all.js"></script>
-  	<script src="vendor/js/jquery.js" ></script>
-	<script src="vendor/js/upload.js" ></script>
 </head>
 <body>
 
@@ -184,76 +148,45 @@ if (isset($_POST['upload'])) {
 </section>
 	<!-- navbar akhir -->
 
+
 	<!-- Konten -->
 <div class="content">
 	<div class="container">
-		<h1 class="text-center">Pesanan Anda</h1>
 		<?php 
-			$detail_transaksi = tampil("SELECT * FROM detail_transaksi a, transaksi b, produk c WHERE a.transaksiID = b.transaksiID AND c.produkID = a.produkID AND a.transaksiID = $transaksiID");
-			foreach ($detail_transaksi as $detail) {
-				$totalproduk[] = $detail['qty'];
-				$subtotal[] = $detail['subtotal'];
-			}
+			$user = tampil("SELECT * FROM user WHERE userID = $userID")[0];
+			$trx = tampil("SELECT * FROM transaksi a, detail_transaksi b, produk c, user d WHERE d.userID = $userID AND a.transaksiID = b.transaksiID AND b.produkID = c.produkID AND a.status_pembayaran = '0' GROUP BY a.transaksiID");
+			$kirim = tampil("SELECT * FROM transaksi a, detail_transaksi b, produk c, user d WHERE d.userID = $userID AND a.transaksiID = b.transaksiID AND b.produkID = c.produkID AND a.status_pengiriman = '1' GROUP BY a.transaksiID")
 		?>
-		<div class="card">
-			<div class="card-body">
-				<div class="text-capitalize">
-					<label>Total Produk</label>
-					<label class="float-right"><?= array_sum($totalproduk); ?> Pcs</label>
+		<div><a href="akun.php"><i class="fas fa-user-circle mr-2"></i>Selamat Datang <?= $user['nama']; ?></a></div>
+		<h1 class="text-center mt-3">Notifikasi</h1>
+		<div>
+
+			<h3>Produk Dikirim</h3>
+			<?php if ($kirim > 0): ?>
+				<?php foreach ($kirim as $data): ?>					
+				<div class="alert alert-success">
+					<a href="konfirmasi.php?idtransaksi=<?= $data['transaksiID']; ?>"><span>Produk yang anda pesan, Dengan ID transaksi : <?= $data['transaksiID']; ?></span></a>
 				</div>
-				<hr>
-				<div class="text-capitalize">
-					<label>produk</label>
-					<?php foreach ($detail_transaksi as $p): ?>						
-						<label class="float-right">
-							<span class="badge badge-danger"><?= $p['qty']; ?> Pcs</span>
-							<?= $p['namaproduk']; ?>
-							<span class="ml-3">Rp. <?= number_format($p['harga'],2,',','.'); ?></span>
-						</label>
-						<br>
-						<hr>
-					<?php endforeach ?>
+				<?php endforeach ?>
+			<?php elseif ($kirim == false): ?>
+				<div class="alert alert-success">
+					<p>Tidak Ada Pengiriman</p>
 				</div>
-				<div class="text-capitalize">
-					<label>Total Pembayaran</label>
-					<label class="float-right">Rp. <?= number_format(array_sum($subtotal),2,',','.'); ?></label>
+			<?php endif ?>
+
+			<h3>Pesanan</h3>
+			<?php if ($trx > 0): ?>
+				<?php foreach ($trx as $data): ?>					
+				<div class="alert alert-danger">
+					<a href="konfirmasi.php?idtransaksi=<?= $data['transaksiID']; ?>"><span>Anda Memiliki Transaksi Yang Belum Dibayar, Dengan ID transaksi : <?= $data['transaksiID']; ?></span></a>
 				</div>
-				<hr>
-				<div class="font-weight-bold text-capitalize">
-					<label>pembayaran</label>
-						<ul class="list-unstyled text-uppercase float-right text-justify">
-							<li>bni no.rek : 123456789</li>
-							<li>bri no.rek : 123456789</li>
-							<li>bca no.rek : 123456789</li>
-						</ul>
-						<br><br>
-					<?php if ($konfirmasi['status_pembayaran'] == 0): ?>
-						<label class="alert alert-danger w-100 text-center">Silahkan Unggah Bukti Pembayaran Mendapatkan No Resi</label>
-					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 0):?>				
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
-						<label class="alert alert-danger w-100 text-center">Silahkan Menunggu Proses Pengiriman</label>
-					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 1) :?>
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
-						<label class="alert alert-success w-100 text-center">Pesanan Anda Telah Dikirim</label>
-					<?php endif ?>
+				<?php endforeach ?>
+			<?php elseif ($trx == false): ?>
+				<div class="alert alert-danger">
+					<p>Tidak Ada Pemesanan</p>
 				</div>
-				<form action="" method="POST" enctype="multipart/form-data">
-					<div class="imgUp font-weight-bold">
-						<div>
-							<label>Upload Bukti Pembayaran</label>
-						</div>
-		    			<label class="col-md-3 imagePreview float-left mt-3" for="bukti">
-		    			</label>
-						<div>
-							<label class="btn btn-info float-right">
-								Pilih Gambar<input id="bukti" type="file" class="uploadFile gambar" value="Upload Photo" name="uploadbukti">
-							</label>
-						</div>
-					</div>
-					<br>
-					<button class="btn btn-primary float-right" type="submit" name="upload">Unggah</button>
-				</form>
-			</div>
+			<?php endif ?>
+
 		</div>
 	</div>
 </div>
@@ -275,7 +208,7 @@ if (isset($_POST['upload'])) {
 				<hr class="w-50 mt-2">
 				<a class="col-12" href="infosyaratdanketentuan.php">Syarat dan Ketentuan</a><br>
 				<a class="col-12" href="infopengiriman.php">Info pengiriman</a><br>
-				<a class="col-12" href="infocarabelanja.php">Cara belanja</a>
+				<a class="col-12" href="konfirmasi.php?idtransaksi=">Cara belanja</a>
 			</div>
 			<div class="col-md-4 mt-2 mb-2">
 				<a href="https://api.instagram.com/v1/self/media/recent?access_token=ACCESS_TOKEN" class="mr-3">
@@ -308,6 +241,6 @@ if (isset($_POST['upload'])) {
       </div>
     </div>
   </div>
-
+  
 </body>
 </html>

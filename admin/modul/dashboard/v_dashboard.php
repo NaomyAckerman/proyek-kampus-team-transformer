@@ -36,7 +36,7 @@ for($i=1;$i<=12;$i++){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Pendapatan Harian <?php echo "(" . date('d-m-Y') . ")"; ?></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_harian['hasil'],2,',','.'); ?></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_harian['hasil'],0,',','.'); ?></div>
                         </div>
                         <div class="col-auto">
                             <i class="icofont-chart-bar-graph fa-2x text-gray-300"></i>
@@ -53,7 +53,7 @@ for($i=1;$i<=12;$i++){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pendapatan Bulanan <?php echo "(" . date('m-Y') . ")"; ?></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_bulanan['hasil'],2,',','.'); ?></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_bulanan['hasil'],0,',','.'); ?></div>
                         </div>
                         <div class="col-auto">
                             <i class="icofont-chart-bar-graph fa-2x text-gray-300"></i>
@@ -68,7 +68,7 @@ for($i=1;$i<=12;$i++){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pendapatan Tahunan <?php echo "(" . date('Y') . ")"; ?></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_tahunan['hasil'],2,',','.'); ?></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?php echo number_format($data_rekap_tahunan['hasil'],0,',','.'); ?></div>
                         </div>
                         <div class="col-auto">
                             <i class="icofont-chart-bar-graph fa-2x text-gray-300"></i>
