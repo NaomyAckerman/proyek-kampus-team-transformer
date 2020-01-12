@@ -1,0 +1,139 @@
+/*Android*/
+@media (max-width: 575.98px) {
+
+}
+
+/*css header*/
+
+#navbar{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: block;
+  z-index: 9999;
+  transition: top 0.7s;
+}
+
+.navbar{
+	background-color: pink;
+	font-family: brush;
+	color: black;
+}
+
+.wrapper-input{
+	position: relative;
+	height: 45px;
+	padding-left: 10px;
+	border-radius: 25px;
+	background-color: white;
+}
+.wrapper-input input{
+	border: 0px;
+	position: relative;
+	margin-top: 10px;
+	background-color: none;
+}
+.wrapper-input button{
+	position: relative;
+	border: 0px;
+	background-color: white;
+	border-radius: 25px;
+	margin-right: 10px;
+}
+.wrapper-input input:focus,.wrapper-input button:focus{
+	outline: none;
+}
+
+header a{
+	text-decoration: none;
+	color: white;
+}
+
+nav a{
+	text-decoration: none;
+	color: black;
+}
+
+
+header .collapse a:hover, header .collapse a:focus{
+	text-decoration: none;
+	color : brown;
+}
+
+nav a:hover{
+	text-decoration: none;
+	color: black;
+}
+
+nav .nav-item .nav-link.warna{
+	color: black;
+}
+
+nav .nav-item .nav-link.warna:hover,nav .nav-item .nav-link.warna:focus{
+	color: brown;
+}
+
+nav i{
+	font-size: 15px;	
+}
+
+nav .dropdown-menu .dropdown-item:hover{
+	color: brown;
+}
+
+.navbar-toggler:hover, .navbar-toggler:focus{
+	outline-style: none;
+	border: none;
+}
+
+
+
+
+/*css content*/
+
+.content{
+	color: brown;
+	margin: 115px auto 20px;
+}
+
+.container input.gambar{
+	width: 0px;
+	height: 0px;
+}
+.content .imagePreview{
+    width: 100%;
+    height: 270px;
+	background:url(http://cliquecities.com/assets/no-image-e3699ae23f866f6cbdf8ba2443ee5c4e.jpg);
+	background-size: cover;
+	background-repeat:no-repeat;
+	display: inline-block;
+	box-shadow:0px -3px 6px 2px rgba(0,0,0,0.2);
+	border-radius: 5px;
+}
+.content .imgUp
+{
+	margin: 20px 0 30px;
+}
+
+/*css footer*/
+
+
+footer{
+	background-color: pink;
+	font-family: brush;
+	color: black;
+}
+
+footer .btn{
+	font-size: 14px;
+	margin: -10px auto 0px;
+	color: black;
+}
+
+footer a{
+	color: black;
+}
+footer a:hover, footer a:focus{
+	color: brown;
+	text-decoration: none;
+}

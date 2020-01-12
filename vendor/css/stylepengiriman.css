@@ -1,0 +1,163 @@
+/*Android*/
+@media (max-width: 575.98px) {
+	.content h1{
+		padding-top: 15px;
+	}
+}
+
+/*css header*/
+
+#navbar{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: block;
+  z-index: 9999;
+  transition: top 0.7s;
+}
+
+.navbar{
+	background-color: pink;
+	font-family: brush;
+	color: black;
+}
+
+.navbar .collapse .nav-item{
+	position: relative;	
+	transition: 0.6s;
+}
+
+.navbar .collapse .nav-item::after{
+	content: "";
+	position: relative;
+	bottom: 7px;
+	display: block;
+	border: 0.5px solid brown;
+	width: 0;
+	margin: 0 auto 0;		
+	transition: 0.3s;
+}
+
+.navbar .collapse .nav-item:hover::after{
+	border: 0.5px solid brown;
+	width: 50%;
+	display: block;
+}
+
+
+.wrapper-input{
+	position: relative;
+	height: 45px;
+	padding-left: 10px;
+	border-radius: 25px;
+	background-color: white;
+}
+.wrapper-input input{
+	border: 0px;
+	position: relative;
+	margin-top: 10px;
+	background-color: none;
+}
+.wrapper-input button{
+	position: relative;
+	border: 0px;
+	background-color: white;
+	border-radius: 25px;
+	margin-right: 10px;
+}
+.wrapper-input input:focus,.wrapper-input button:focus{
+	outline: none;
+}
+
+header a{
+	text-decoration: none;
+	color: white;
+}
+
+nav a{
+	text-decoration: none;
+	color: black;
+}
+
+
+header .collapse a:hover, header .collapse a:focus{
+	text-decoration: none;
+	color : brown;
+}
+
+nav a:hover{
+	text-decoration: none;
+	color: black;
+}
+
+nav .nav-item .nav-link.warna{
+	color: black;
+}
+
+nav .nav-item .nav-link.warna:hover,nav .nav-item .nav-link.warna:focus{
+	color: brown;
+}
+
+nav i{
+	font-size: 15px;	
+}
+
+nav .dropdown-menu .dropdown-item:hover{
+	color: brown;
+}
+
+.navbar-toggler:hover, .navbar-toggler:focus{
+	outline-style: none;
+	border: none;
+}
+
+
+
+
+/*css content*/
+
+.content{
+	margin-top: 100px;
+	color: brown;
+}
+
+.content .judul{
+	position: relative;
+	padding: 1px;
+	margin-bottom: 50px;
+}
+
+.content .judul::after{
+	content: "";
+	display: block;
+	border: 1px solid brown;
+	width: 50%;
+	margin: auto;
+}
+
+.content input,.content select{
+	border-radius: 25px;
+}
+
+/*css footer*/
+
+
+footer{
+	background-color: pink;
+	font-family: brush;
+	color: black;
+}
+
+footer .btn{
+	font-size: 14px;
+	margin: -10px auto 0px;
+	color: black;
+}
+
+footer a{
+	color: black;
+}
+footer a:hover, footer a:focus{
+	color: brown;
+	text-decoration: none;
+}
