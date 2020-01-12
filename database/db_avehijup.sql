@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Dec 20, 2019 at 08:11 AM
--- Server version: 10.4.10-MariaDB
--- PHP Version: 7.1.33
+-- Host: 127.0.0.1
+-- Generation Time: Jan 12, 2020 at 12:36 PM
+-- Server version: 10.3.15-MariaDB
+-- PHP Version: 7.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -61,9 +61,8 @@ CREATE TABLE `kategori` (
 --
 
 INSERT INTO `kategori` (`kategoriID`, `namakategori`, `deskripsikategori`) VALUES
-(8, 'Kategori 1', 'Deskripsi Kategori 1'),
-(9, 'Kategori 2', 'Deskripsi Kategori 2'),
-(10, 'venna', 'cantik banget dalam mmpi');
+(8, 'Bella Square', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price  ðŸ’°Rp. 20.000'),
+(9, 'Pashmina', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000');
 
 -- --------------------------------------------------------
 
@@ -103,8 +102,22 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`produkID`, `namaproduk`, `deskripsiproduk`, `harga`, `jumlah`, `kategoriID`, `GambarProduk`, `jenisproduk`, `warnaproduk`, `best_seller_status`) VALUES
-(5, 'Produk 1', 'zxzx', 10000, 20, 9, 't.png', 'Bella Square', 'Abu-Abu', '1'),
-(6, 'bellasquare abu', 'bgus', 30000, 7, 9, 'logo baru av.png', 'Bella Square', 'Abu-Abu', '0');
+(7, 'Bella Square Dark Grey', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ?Rp. 25.000?\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 4, 8, 'dark-grey.jpg', 'Bella Square', 'Grey', '0'),
+(9, 'Pashmina Soft Zaitun', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ?Rp. 35.000?\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 4, 9, 'soft-zaitun.jpg', 'Pashmina', 'Choco', '0'),
+(10, 'Bella Square Army', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ?Rp. 25.000?\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 2, 8, 'army.jpg', 'Bella Square', 'Army', '0'),
+(12, 'Bella Square Pink Salem', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ?Rp. 25.000?\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 3, 8, 'pink-salem.jpg', 'Bella Square', 'Pink', '0'),
+(13, 'Bella Square Mocca', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ðŸ’°Rp. 25.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 4, 8, 'mocca.jpg', 'Bella Square', 'Choco', '0'),
+(15, 'Bella Square Green pastel', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ðŸ’°Rp. 25.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 4, 8, 'green-pastel.jpg', 'Bella Square', 'Green', '0'),
+(16, 'Bella Square Lemonade', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ðŸ’°Rp. 25.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 4, 8, 'lemonade.jpg', 'Bella Square', 'Yellow', '0'),
+(17, 'Bella Square Peanut', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ðŸ’°Rp. 25.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 4, 8, 'peanut.jpg', 'Bella Square', 'Choco', '0'),
+(18, 'Pashmina Avocado', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 4, 9, 'avocado.jpg', 'Pashmina', 'Green', '0'),
+(19, 'Pashmina Dark Choco', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 3, 9, 'dark choco.jpg', 'Pashmina', 'Choco', '0'),
+(21, 'Pashmina Smoke Grey', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 4, 9, 'smoke grey.jpg', 'Pashmina', 'Grey', '0'),
+(22, 'Pashmina Tumeric', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 4, 9, 'tumeric.jpg', 'Pashmina', 'Yellow', '0'),
+(23, 'Pashmina Baby Blue', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 3, 9, 'baby-blue.jpg', 'Pashmina', 'Blue', '0'),
+(24, 'Pashmina Steel Blue', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 3, 9, 'steel blue.jpg', 'Pashmina', 'Blue', '0'),
+(25, 'Bella Square Black', 'Best material Polly Cotton\r\nUkuran 115 X 115\r\nBest price cuma ðŸ’°Rp. 25.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 25000, 3, 8, 'black.jpg', 'Bella Square', 'Black', '0'),
+(26, 'Pashmina Dusty Pink', 'Best material Premium Ceruti\r\nUkuran 175 X 175\r\nBest price cuma ðŸ’°Rp. 35.000â¤\r\nBahan sangat lembut dan nyaman dipakai\r\nSerta dijahit rapi dibagian pinggir', 35000, 4, 9, 'dustypink.jpg', 'Pashmina', 'Pink', '0');
 
 -- --------------------------------------------------------
 
@@ -126,7 +139,7 @@ CREATE TABLE `testimoni` (
 --
 
 INSERT INTO `testimoni` (`testimoniID`, `Gambartesti`, `Keterangan`, `userID`, `produkID`, `show_status`) VALUES
-(1, 'ZZZ', 'ZZZ', 8, 5, '1');
+(1, 'ZZZ', 'ZZZ', 8, 5, '0');
 
 -- --------------------------------------------------------
 
@@ -182,7 +195,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userID`, `nama`, `no_telepon`, `alamat`, `kode_pos`, `email`, `password`, `level`, `user_status`, `foto`) VALUES
-(8, 'Dimas Yudha Pratamaz', NULL, NULL, NULL, 'dyp.dimasyp@gmail.comz', '$2y$10$XCSQIoxEk1ApcrqZmVMELOEDmDUGYjCf8DaDGCAXMaaevSpnw8vG2', 'Admin', 1, NULL);
+(8, 'Venna Ersis Relita', NULL, NULL, NULL, 'veersisr@gmail.com', '$2y$10$XCSQIoxEk1ApcrqZmVMELOEDmDUGYjCf8DaDGCAXMaaevSpnw8vG2', 'Admin', 1, NULL),
+(9, 'vennaers', '083847337998', 'Jl.Kalimantan', 67355, 'veersisrel@gmail.com', '$2y$10$p.nsAGDmqTwR6QcJwrMAeeCljeBuopGjDtiPZszRLx9sC7Ya0UZ5e', 'User', 1, '1525447711811.jpg'),
+(10, 'Ellen Melinda', NULL, NULL, NULL, 'ellenmelinda99@gmail.com', '$2y$10$HQWABu9WgbGBbS3XedBKDupzZxucjcOs0jiaLqfLdwYVqqIoebMsS', 'Admin', 1, NULL),
+(11, 'melan', '0834567', 'Jl.Gajahmada', 6677, 'melania@gmail.com', '$2y$10$wQvp4aB9GoZGaxeSk1Tg/uc0lMBSQigr8v03nZZgSMn02Up.Mzp8y', 'User', 1, 'farhan1.png'),
+(12, 'E31180678@mif', '123123123123', 'Lumajang', 6677, 'dyp.dimasyp@gmail.com', '$2y$10$tKmYt9Nc0TVoUtWhoOMDbu8cnAXYKhXz8bg.uUKQ57nMJB6hNwRo6', 'User', 1, 'farhan1.png'),
+(13, 'Melania', NULL, NULL, NULL, 'melaniahnh@gmail.com', '$2y$10$LQDm19WJNoMbV9jJR6Mj4.xVw9ZMTO5yQ235fOHwnh98s9zE/0ASG', 'Admin', 0, NULL);
 
 --
 -- Indexes for dumped tables
@@ -247,7 +265,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
-  MODIFY `no_detail` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `no_detail` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `kategori`
@@ -259,19 +277,19 @@ ALTER TABLE `kategori`
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `cartID` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `cartID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `produkID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `produkID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `testimoni`
 --
 ALTER TABLE `testimoni`
-  MODIFY `testimoniID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `testimoniID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transaksi`
@@ -283,7 +301,7 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `userID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `userID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
