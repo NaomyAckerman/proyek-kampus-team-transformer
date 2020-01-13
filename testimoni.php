@@ -6,9 +6,7 @@ if (isset($_SESSION['login'])) {
 	$userID = $_SESSION['userID'];
 }
 
-$testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID GROUP BY testimoniID desc limit 2");
-$testi2 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID GROUP BY testimoniID desc limit 2,2");
-$testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID GROUP BY testimoniID desc limit 2,4");
+$testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID GROUP BY testimoniID limit 3");
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +29,7 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
 <header id="navbar">
 	<nav class="navbar navbar-light bg-light">
 		<div class="container-fluid">
-		<?php if (isset($_SESSION['login'])) :?>
+		<?php if (isset($_SESSION['login'])) : ?>
 			<div class="nav-item dropdown no-arrow">
               <a class="" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               	<?php $user = tampil("SELECT * FROM user WHERE userID = $userID") ?>
@@ -84,7 +82,7 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
     			<span><i class="fas fa-ellipsis-v"></i></span>
   			</button>
 	  		
-	  		<div class="collapse navbar-collapse collapse" id="navbarNav">
+	  		<div class="collapse navbar-collapse" id="navbarNav">
     			<ul class="navbar-nav ml-auto mr-auto">
 					<li class="nav-item dropdown ml-3">
 				        <a class="nav-link warna dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -102,28 +100,18 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
-  				<form class="form-inline my-2 my-lg-0 mr-5">
+  				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
-		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
+			      		<button class="my-sm-0" type="submit"><i class="fas fa-search" name="cari"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-				<?php 
-    				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
-    				$cek = mysqli_num_rows($result);
-    			 ?>
-    			<span>
-    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
-    					<?php if (!$cek == 0): ?>
-    					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
-    					<?php endif ?>
-    				</a>
-    			</span>
+    			<span><a href="keranjang.php">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
   			</div>	  	
 	  	</div>
 	</nav>
-
+	
 	<div class="collapse" id="navbarToggleExternalContent">
 	   	<div class="bg-dark p-4">
 	   		<div class="container">
@@ -167,14 +155,19 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
 				</ol>   
 				<!-- Wrapper for carousel items -->
 				<div class="carousel-inner">
-					<div class="item carousel-item active">
+				
+					<?php 
+						$counter = 1;
+						foreach ($testi as $data) {
+							$data2 = $data[0];
+					?>
+					<div class="item carousel-item <?php if($counter <= 1){echo "active";} ?>">
 						<div class="row">
-						<?php foreach ($testi as $data): ?>
 							<div class="col-sm-6">
 								<div class="media">
 									<div class="media-left d-flex mr-3">
 										<a href="#">
-											<img src="admin/uploaded_files/<?= $data['Gambartesti'] ?>" alt="">
+											<img src="admin/uploaded_files/<?= $data['Gambartesti']; ?>" alt="">
 										</a>
 									</div>
 									<div class="media-body">
@@ -186,17 +179,11 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
 								</div>
 								<hr>							
 							</div>
-							<?php endforeach ?>
-						</div>			
-					</div>
-					<div class="item carousel-item">
-						<div class="row">
-							<?php foreach ($testi2 as $data): ?>
 							<div class="col-sm-6">
 								<div class="media">
 									<div class="media-left d-flex mr-3">
 										<a href="#">
-											<img src="admin/uploaded_files/<?= $data['Gambartesti'] ?>" alt="">
+											<img src="admin/uploaded_files/<?= $data2['Gambartesti']; ?>" alt="">
 										</a>
 									</div>
 									<div class="media-body">
@@ -208,45 +195,11 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
 								</div>
 								<hr>							
 							</div>
-							<?php endforeach ?>
 						</div>			
 					</div>
-					<div class="item carousel-item">
-						<div class="row">
-							<div class="col-sm-6">
-								<div class="media">
-									<div class="media-left d-flex mr-3">
-										<a href="#">
-											<img src="img/gambar3.jpg" alt="">
-										</a>
-									</div>
-									<div class="media-body">
-										<div class="testimonial">
-											<p>Lorem ipsum dolor sit amet, consec adipiscing elit. Nam eusem scelerisque tempor, varius quam luctus dui. Mauris magna metus nec.</p>
-											<p class="overview"><b>Martin Sommer</b>, UX Analyst</p>
-										</div>
-									</div>
-								</div>
-								<hr>
-							</div>
-							<div class="col-sm-6">
-								<div class="media">
-									<div class="media-left d-flex mr-3">
-										<a href="#">
-											<img src="img/gambar4.jpg" alt="">
-										</a>
-									</div>
-									<div class="media-body">
-										<div class="testimonial">
-											<p>Vestibulum quis quam ut magna consequat faucibus. Pellentesque eget mi suscipit tincidunt. Utmtc tempus dictum. Pellentesque virra.</p>
-											<p class="overview"><b>John Williams</b>, Web Developer</p>
-										</div>
-									</div>
-								</div>
-								<hr>
-							</div>
-						</div>			
-					</div>
+
+					<?php $counter++; } ?>
+
 				</div>
 			</div>
 		</div>
@@ -255,7 +208,6 @@ $testi3 = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.us
 		<?php endif ?>
 	</div>
 </div>
-
 </div>
 	<!-- Konten akhir -->
 
