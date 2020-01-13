@@ -28,7 +28,7 @@
 	  		</div>
 			<div>
 		  		<i class="fas fa-truck mr-3">	Shipping</i>
-		  		<i class="far fa-star mr-3">	Kualitas Pembelian</i>
+		  		<i class="far fa-star mr-3">	Kualitas Premium</i>
 				<i class="fab fa-pied-piper-pp mr-3">	Harga Terjangkau</i>
 			</div>
 		</div>

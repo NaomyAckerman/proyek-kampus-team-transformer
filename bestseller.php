@@ -63,7 +63,7 @@ $best = tampil("SELECT b.produkID,b.harga, namaproduk, GambarProduk, sum(a.qty) 
 		<?php endif; ?>
 			<div>
 		  		<i class="fas fa-truck mx-2"></i><span>Shipping</span>
-		  		<i class="fas fa-star mx-2"></i><span>Kualitas Pembelian</span>
+		  		<i class="fas fa-star mx-2"></i><span>Kualitas Premium</span>
 				<i class="fas fa-dollar-sign mx-2"></i><span>Harga Terjangkau</span>
 			</div>
 		</div>
