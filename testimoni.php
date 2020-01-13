@@ -159,21 +159,20 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
 					<?php 
 						$counter = 1;
 						foreach ($testi as $data) {
-							$data2 = $data[0];
 					?>
 					<div class="item carousel-item <?php if($counter <= 1){echo "active";} ?>">
 						<div class="row">
 							<div class="col-sm-6">
 								<div class="media">
 									<div class="media-left d-flex mr-3">
-										<a href="#">
+										<a href="detailproduk.php?Produk=<?= $data['produkID']; ?>">
 											<img src="admin/uploaded_files/<?= $data['Gambartesti']; ?>" alt="">
 										</a>
 									</div>
 									<div class="media-body">
 										<div class="testimonial">
-											<p>Lorem ipsum dolor sit amet, consec adipiscing elit. Nam eusem scelerisque tempor, varius quam luctus dui. Mauris magna metus nec.</p>
-											<p class="overview"><b>Paula Wilson</b>, Media Analyst</p>
+											<p><?= $data['Keterangan']; ?></p>
+											<p class="overview"><b><?= $data['nama']; ?></b>, Email : <?= $data['email']; ?></p>
 										</div>
 									</div>
 								</div>
@@ -182,14 +181,14 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
 							<div class="col-sm-6">
 								<div class="media">
 									<div class="media-left d-flex mr-3">
-										<a href="#">
-											<img src="admin/uploaded_files/<?= $data2['Gambartesti']; ?>" alt="">
+										<a href="detailproduk.php?Produk=<?= $data['produkID']; ?>">
+											<img src="admin/uploaded_files/<?= $data['Gambartesti']; ?>" alt="">
 										</a>
 									</div>
 									<div class="media-body">
 										<div class="testimonial">
-											<p>Lorem ipsum dolor sit amet, consec adipiscing elit. Nam eusem scelerisque tempor, varius quam luctus dui. Mauris magna metus nec.</p>
-											<p class="overview"><b>Paula Wilson</b>, Media Analyst</p>
+											<p><?= $data['Keterangan']; ?></p>
+											<p class="overview"><b><?= $data['nama']; ?></b>, Email : <?= $data['email']; ?></p>
 										</div>
 									</div>
 								</div>
