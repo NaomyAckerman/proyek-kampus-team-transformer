@@ -36,15 +36,14 @@ if(isset($_POST['btnSimpan'])){
                 if(isset($_GET['transaksiID'])){  
                     $transaksiID = $_GET['transaksiID'];   
                     $query = mysqli_query($koneksi, "SELECT status_pembayaran, no_resi, status_pengiriman  FROM transaksi WHERE transaksiID='$transaksiID'");
-                    $data = mysqli_fetch_array($query); 
+                    $data = mysqli_fetch_array($query);
                 ?>
                 <div class="row">
                     <input type="hidden" name="transaksiID" value="<?php echo $transaksiID; ?>">
                     <div class="form-group col-md-4">
                         <label for="">Invoices</label>
                         <input type="text" class="form-control" value="<?php echo $transaksiID; ?>" readonly required>
-                    </div>
-                    
+                    </div>    
                 </div>
                 <div class="row">
                     

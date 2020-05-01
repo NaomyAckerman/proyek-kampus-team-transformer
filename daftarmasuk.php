@@ -197,10 +197,17 @@ if (isset($_POST['daftar'])) {
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
-  				<form class="form-inline my-2 my-lg-0 mr-5">
+  				<?php 
+    				//tekan tombol cari
+					if (isset($_POST["cari"])) {
+						$produk = cari($_POST);
+						header('location:index.php?key='.$_POST["keyword"].'');
+					}
+    			?>
+  				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
-		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
+			      		<button class="my-sm-0" type="submit" name="cari"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
@@ -229,6 +236,11 @@ if (isset($_POST['daftar'])) {
       				<li class="nav-item">
         				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
+      				<?php if (isset($_SESSION['login'])): ?>
+	      				<li class="nav-item">
+	        				<a href="logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+	      				</li>
+      				<?php endif ?>
     			</ul>
     		</div>
 	   	</div>

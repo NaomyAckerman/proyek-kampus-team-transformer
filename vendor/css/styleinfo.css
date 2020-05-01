@@ -1,13 +1,15 @@
 /*Android*/
-@media (max-width: 575.98px) {
+@media (max-width: 767.98px) {
 	.content .carousel-inner{
 		margin-top: 125px; 
 		height: 250px;
 	}
-	.content{
-	padding: 5px;
+	.content .carousel-inner img{
+		height: 250px;
+		width: 100%;
 	}
 }
+
 
 /*css header*/
 
@@ -73,10 +75,15 @@
 	outline: none;
 }
 
+nav span a:hover,nav span a:focus{
+	text-decoration: none;
+	color : brown !important;
+}
 header a{
 	text-decoration: none;
-	color: white;
+	color: #fff;
 }
+
 
 nav a{
 	text-decoration: none;
@@ -86,8 +93,9 @@ nav a{
 
 header .collapse a:hover, header .collapse a:focus{
 	text-decoration: none;
-	color : brown;
+	color : pink;
 }
+
 
 nav a:hover{
 	text-decoration: none;
@@ -114,6 +122,8 @@ nav .dropdown-menu .dropdown-item:hover{
 	outline-style: none;
 	border: none;
 }
+
+/*akhir header*/
 
 
 /*css content*/

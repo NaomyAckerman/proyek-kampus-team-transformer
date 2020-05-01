@@ -19,24 +19,38 @@ if (isset($_GET['idtransaksi'])) {
 	$konfirmasi = tampil("SELECT * FROM detail_transaksi a, transaksi b, user d WHERE a.transaksiID = b.transaksiID AND b.userID = $userID GROUP BY b.transaksiID DESC")[0];
 	$transaksiID = $konfirmasi['transaksiID'];
 }
+
+
 if (isset($_POST['upload'])) {
-	if (uploadbukti() == 1) {
-		$gambar = $_FILES['uploadbukti']['name'];
-		mysqli_query($koneksi,"UPDATE transaksi SET
-		  		gbrbukti_pembayaran = '$gambar'
-				WHERE transaksiID = $transaksiID");
-		echo "<script>
-			alert('berhasil');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
-			exit();
+	if ($konfirmasi['status_pembayaran'] == 1) {
+		header('location:?idtransaksi='.$idtransaksi.'');
 	}else{
-		echo "<script>
-			alert('gagal');
-			document.location.href='konfirmasi.php';
-			</script>
-			";
+		if (uploadbukti() == 1) {
+			$gambar = $_FILES['uploadbukti']['name'];
+			mysqli_query($koneksi,"UPDATE transaksi SET
+			  		gbrbukti_pembayaran = '$gambar'
+					WHERE transaksiID = $transaksiID");
+			if (isset($idtransaksi)) {
+				echo "<script>
+						alert('Berhasil Upload Bukti Pembayaran');
+						document.location.href='konfirmasi.php?idtransaksi=".$idtransaksi."';
+						</script>
+						";
+			}else{
+				echo "<script>
+						alert('Berhasil Upload Bukti Pembayaran');
+						</script>
+						";
+			}
+		}else{
+			if (isset($idtransaksi)) {
+				echo "<script>
+					alert('gagal');
+					document.location.href='konfirmasi.php?idtransaksi=".$idtransaksi."';
+					</script>
+					";
+			}
+		}
 	}
 }
 
@@ -134,10 +148,17 @@ if (isset($_POST['upload'])) {
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
-  				<form class="form-inline my-2 my-lg-0 mr-5">
+  				<?php 
+    				//tekan tombol cari
+					if (isset($_POST["cari"])) {
+						$produk = cari($_POST);
+						header('location:index.php?key='.$_POST["keyword"].'');
+					}
+    			?>
+  				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
-		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
+			      		<button class="my-sm-0" type="submit" name="cari"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
@@ -176,6 +197,11 @@ if (isset($_POST['upload'])) {
       				<li class="nav-item">
         				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
+      				<?php if (isset($_SESSION['login'])): ?>
+	      				<li class="nav-item">
+	        				<a href="logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+	      				</li>
+      				<?php endif ?>
     			</ul>
     		</div>
 	   	</div>
@@ -228,12 +254,16 @@ if (isset($_POST['upload'])) {
 						</ul>
 						<br><br>
 					<?php if ($konfirmasi['status_pembayaran'] == 0): ?>
-						<label class="alert alert-danger w-100 text-center">Silahkan Unggah Bukti Pembayaran Mendapatkan No Resi</label>
+						<label class="alert alert-danger w-100 text-center">Kode Invoice : <?= $konfirmasi['transaksiID']; ?> <br>
+						Silahkan Unggah Bukti Pembayaran untuk Mendapatkan No Resi
+						</label>
 					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 0):?>				
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
+						<label class="alert alert-info w-100 text-center">Pesanan Anda dengan Kode Invoice : <?= $konfirmasi['transaksiID']; ?> telah dikonfirmasi</label>
 						<label class="alert alert-danger w-100 text-center">Silahkan Menunggu Proses Pengiriman</label>
 					<?php elseif ($konfirmasi['status_pembayaran'] == 1 AND $konfirmasi['status_pengiriman'] == 1) :?>
-						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?></label>
+						<label class="alert alert-info w-100 text-center">No Resi : <?= $konfirmasi['no_resi']; ?><br>
+						Kode Invoice : <?= $konfirmasi['transaksiID']; ?>
+						</label>
 						<label class="alert alert-success w-100 text-center">Pesanan Anda Telah Dikirim</label>
 					<?php endif ?>
 				</div>

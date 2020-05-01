@@ -7,7 +7,16 @@ if (!isset($_SESSION['login'])) {
 	$userID = $_SESSION['userID'];
 }
 
+$produk = tampil("SELECT * FROM produk");
+
 if (isset($_POST['upload'])) {
+	if ($_POST['produk'] == "") {
+		echo "<script>
+	      		alert('Produk tidak ada !!!');
+	   			document.location.href='uploadtesti.php';
+     	  	</script>";
+     	exit();
+	}
 	if (tambah($_POST) > 0) {
 		echo "<script>
 	       		alert('Upload Testimoni Berhasil!!!');
@@ -20,6 +29,7 @@ if (isset($_POST['upload'])) {
 	   			document.location.href='uploadtesti.php';
      	  	</script>";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -96,7 +106,7 @@ if (isset($_POST['upload'])) {
     			<span><i class="fas fa-ellipsis-v"></i></span>
   			</button>
 	  		
-	  		<div class="collapse navbar-collapse collapse" id="navbarNav">
+	  		<div class="collapse navbar-collapse" id="navbarNav">
     			<ul class="navbar-nav ml-auto mr-auto">
 					<li class="nav-item dropdown ml-3">
 				        <a class="nav-link warna dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -114,28 +124,37 @@ if (isset($_POST['upload'])) {
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
-  				<form class="form-inline my-2 my-lg-0 mr-5">
+  				<?php 
+    				//tekan tombol cari
+					if (isset($_POST["cari"])) {
+						$produk = cari($_POST);
+						header('location:index.php?key='.$_POST["keyword"].'');
+					}
+    			?>
+  				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
-		      			<input type="search" placeholder="Search" aria-label="Search" name="cari">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
+			      		<button class="my-sm-0" type="submit" name="cari"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
+    			<span>
+    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
+				<?php if (isset($_SESSION['login'])): ?>
 				<?php 
     				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
     				$cek = mysqli_num_rows($result);
     			 ?>
-    			<span>
-    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
     					<?php if (!$cek == 0): ?>
     					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
     					<?php endif ?>
+    			<?php endif ?>
     				</a>
     			</span>
   			</div>	  	
 	  	</div>
 	</nav>
-
+	
 	<div class="collapse" id="navbarToggleExternalContent">
 	   	<div class="bg-dark p-4">
 	   		<div class="container">
@@ -156,6 +175,11 @@ if (isset($_POST['upload'])) {
       				<li class="nav-item">
         				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
+      				<?php if (isset($_SESSION['login'])): ?>
+	      				<li class="nav-item">
+	        				<a href="logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+	      				</li>
+      				<?php endif ?>
     			</ul>
     		</div>
 	   	</div>
@@ -165,7 +189,7 @@ if (isset($_POST['upload'])) {
 	<!-- navbar akhir -->
 
 	<!-- Konten -->
-<div class="content mt-5">
+<div class="content">
 	<div class="container">
 		<form method="POST" action="" enctype="multipart/form-data">	
 		<div class="row">
@@ -180,7 +204,13 @@ if (isset($_POST['upload'])) {
 		  		<i class="fas fa-heart"></i>
 		  		<textarea class="form-control" id="form01" name="testi"></textarea>
 		  		<br>
-		  		<span><button class="btn btn-info" name="upload">Kirim Testimoni</button></span>
+		  		<select class="form-control col-sm-3" name="produk">
+		  				<option value="" class="active" readonly>Pilih Produk Testimoni</option>
+		  			<?php foreach ($produk as $data): ?>
+			  			<option value="<?= $data['produkID'] ?>"><?= $data['namaproduk'] ?></option>
+		  			<?php endforeach ?>
+		  		</select>
+		  		<div class="my-4"><button class="btn btn-info" name="upload">Kirim Testimoni</button></div>
 		  	</div>
  		</div>
 		</form>
@@ -216,5 +246,25 @@ if (isset($_POST['upload'])) {
 	</div>
 </footer>
 <!-- footer akhir -->
+
+<!-- modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Apa anda ingin keluar?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Klik tombol keluar untuk berganti akun.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Tidak</button>
+          <a class="btn btn-primary" href="logout.php">Keluar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

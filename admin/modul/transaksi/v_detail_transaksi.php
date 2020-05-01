@@ -99,7 +99,7 @@ $transaksiID = $_GET['transaksiID'];
                     <tbody>
                         <?php
                         $no = 1;
-                        $query = mysqli_query($koneksi, "SELECT no_detail, transaksiID, produk.produkID, produk.namaproduk, qty, detail_transaksi.harga, subtotal FROM detail_transaksi JOIN produk ON detail_transaksi.produkID = produk.produkID");
+                        $query = mysqli_query($koneksi, "SELECT no_detail, transaksiID, produk.produkID, produk.namaproduk, qty, detail_transaksi.harga, subtotal FROM detail_transaksi JOIN produk ON detail_transaksi.produkID = produk.produkID WHERE detail_transaksi.transaksiID = $transaksiID");
                         while($i = mysqli_fetch_array($query)){
                         ?>
                         <tr>

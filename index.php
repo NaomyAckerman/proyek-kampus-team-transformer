@@ -11,7 +11,11 @@ $produk = tampil("SELECT * FROM produk");
 
 //tekan tombol cari
 if (isset($_POST["cari"])) {
-	$produk = cari($_POST);
+	$keyword = $_POST['keyword'];
+	$produk = cari($keyword);
+}elseif (isset($_GET['key'])) {
+	$keyword = $_GET['key'];
+	$produk = cari($keyword);
 }
 ?>
 
@@ -35,7 +39,7 @@ if (isset($_POST["cari"])) {
 <header id="navbar">
 	<nav class="navbar navbar-light bg-light">
 		<div class="container-fluid">
-		<?php if (isset($_SESSION['login'])) : ?>
+		<?php if (isset($_SESSION['login'])) :?>
 			<div class="nav-item dropdown no-arrow">
               <a class="" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               	<?php $user = tampil("SELECT * FROM user WHERE userID = $userID") ?>
@@ -46,18 +50,18 @@ if (isset($_POST["cari"])) {
 	                </span>	
               	<?php endforeach ?>
               </a>
-              <!-- Dropdown - User Information -->
-              <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="akun.php">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="logout.php" data-toggle="modal" data-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
-                </a>
-              </div>
+	              <!-- Dropdown - User Information -->
+	              <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in" aria-labelledby="userDropdown">
+	                <a class="dropdown-item" href="akun.php">
+	                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+	                  Profile
+	                </a>
+	                <div class="dropdown-divider"></div>
+	                <a class="dropdown-item" href="logout.php" data-toggle="modal" data-target="#logoutModal">
+	                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+	                  Logout
+	                </a>
+	              </div>
               </div>           
 
 		<?php elseif (!isset($_SESSION['login'])) :?>
@@ -106,14 +110,33 @@ if (isset($_POST["cari"])) {
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
+  				<?php 
+    				//tekan tombol cari
+					if (isset($_POST["cari"])) {
+						$produk = cari($_POST);
+						header('location:index.php?key='.$_POST["keyword"].'');
+					}
+    			?>
   				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
 		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search" name="cari"></i></button>
+			      		<button class="my-sm-0" type="submit" name="cari"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-    			<span><a href="keranjang.php">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
+    			<span>
+    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
+				<?php if (isset($_SESSION['login'])): ?>
+				<?php 
+    				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
+    				$cek = mysqli_num_rows($result);
+    			 ?>
+    					<?php if (!$cek == 0): ?>
+    					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
+    					<?php endif ?>
+    			<?php endif ?>
+    				</a>
+    			</span>
   			</div>	  	
 	  	</div>
 	</nav>
@@ -138,6 +161,11 @@ if (isset($_POST["cari"])) {
       				<li class="nav-item">
         				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
+      				<?php if (isset($_SESSION['login'])): ?>
+	      				<li class="nav-item">
+	        				<a href="logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+	      				</li>
+      				<?php endif ?>
     			</ul>
     		</div>
 	   	</div>
@@ -191,36 +219,40 @@ if (isset($_POST["cari"])) {
 	$colwidth = 12 / $numcol;
 	?>
 	<div class="row m-5">
-	<?php foreach ($produk as $data) { ?>
-		
-		<div class="col-md-<?= $colwidth; ?> mt-5">
-			<a href="detailproduk.php?Produk=<?= $data['produkID'] ?>">
-				<img class="float-left rounded mr-4" height="150" width="150" alt="Card image cap" src="admin/uploaded_files/<?= $data['GambarProduk'] ?>">
-			</a>
-				<div class="mt-1">
-			    	<h5><?= $data['namaproduk'] ?></h5>
-			    	<p>Rp. <?= number_format($data['harga'],2,',','.') ?></p>
-	
-					<?php if ($data['jumlah'] <= 0): ?>
-						<div class="habis">
-				      	<p>Sold Out</p>
-				      	<p class="small"><?= $data['jumlah'] ?> pcs</p>
-						</div>
-					<?php else: ?>
-				      	<div class="ada">
-				      	<p>Ready Stock</p>
-				      	<p class="small"><?= $data['jumlah'] ?> pcs</p>
-						</div>
-					<?php endif ?>
+		<?php if ($produk == NULL): ?>
+			<span class="alert alert-danger mx-auto">Produk Dengan Keywoard <b><?= $keyword; ?></b> Tidak Ada</span>
+		<?php else: ?>
+			<?php foreach ($produk as $data) { ?>
+				
+				<div class="col-md-<?= $colwidth; ?> mt-5">
+					<a href="detailproduk.php?Produk=<?= $data['produkID'] ?>">
+						<img class="float-left rounded mr-4" height="150" width="150" alt="Card image cap" src="admin/uploaded_files/<?= $data['GambarProduk'] ?>">
+					</a>
+						<div class="mt-1">
+					    	<h5><?= $data['namaproduk'] ?></h5>
+					    	<p>Rp. <?= number_format($data['harga'],2,',','.') ?></p>
+			
+							<?php if ($data['jumlah'] <= 0): ?>
+								<div class="habis">
+						      	<p>Sold Out</p>
+						      	<p class="small"><?= $data['jumlah'] ?> pcs</p>
+								</div>
+							<?php else: ?>
+						      	<div class="ada">
+						      	<p>Ready Stock</p>
+						      	<p class="small"><?= $data['jumlah'] ?> pcs</p>
+								</div>
+							<?php endif ?>
 
-		     	</div>
-		</div>	
-	<?php 
-	$countrow++;
-	if ($countrow % $numcol == 0)
-		echo '</div><div class="row m-5">';
-	}
-	 ?>
+				     	</div>
+				</div>	
+			<?php 
+			$countrow++;
+			if ($countrow % $numcol == 0)
+				echo '</div><div class="row m-5">';
+			}
+			 ?>
+		<?php endif ?>
 	</div>
 </div>
 </div>
@@ -243,7 +275,7 @@ if (isset($_POST["cari"])) {
 				<a class="col-12" href="infocarabelanja.php">Cara belanja</a>
 			</div>
 			<div class="col-md-4 mt-2 mb-2">
-				<a href="https://api.instagram.com/v1/self/media/recent?access_token=ACCESS_TOKEN" class="mr-3">
+				<a href="https://www.instagram.com/ave.hijup/?hl=id" class="mr-3">
 					<img src="img/ig1.png" width="30" height="30">
 				Ave.Hijup</a>
 				<a href="https://api.whatsapp.com/send?phone=6283847337988&text=&source=&data=">

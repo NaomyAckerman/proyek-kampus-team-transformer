@@ -6,7 +6,7 @@ if (isset($_SESSION['login'])) {
 	$userID = $_SESSION['userID'];
 }
 
-$testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID GROUP BY testimoniID limit 3");
+$testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.userID AND testimoni.show_status = '1'");
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +29,7 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
 <header id="navbar">
 	<nav class="navbar navbar-light bg-light">
 		<div class="container-fluid">
-		<?php if (isset($_SESSION['login'])) : ?>
+		<?php if (isset($_SESSION['login'])) :?>
 			<div class="nav-item dropdown no-arrow">
               <a class="" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               	<?php $user = tampil("SELECT * FROM user WHERE userID = $userID") ?>
@@ -100,14 +100,33 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
         				<a class="nav-link warna" href="bestseller.php">BEST SELLER</a>
       				</li>
     			</ul>
+  				<?php 
+    				//tekan tombol cari
+					if (isset($_POST["cari"])) {
+						$produk = cari($_POST);
+						header('location:index.php?key='.$_POST["keyword"].'');
+					}
+    			?>
   				<form action="" method="post" class="form-inline my-2 my-lg-0 mr-5">
 		      		<div class="wrapper-input">
 		      			<input type="search" placeholder="Search" aria-label="Search" name="keyword" autocomplete="off">
-			      		<button class="my-sm-0" type="submit"><i class="fas fa-search" name="cari"></i></button>
+			      		<button class="my-sm-0" type="submit" name="cari"><i class="fas fa-search"></i></button>
 			      	</div>
     			</form>
     			<span><a href="https://api.whatsapp.com/send?phone=6283847337988&text=%Saya%berminat%dengan%produk%AveHijup&source=&data=">Hubungi Kami</a><i class="far fa-comment-dots ml-2 mr-4"></i></span>
-    			<span><a href="keranjang.php">Tas Belanja</a><i class="fas fa-shopping-cart ml-2"></i></span>
+    			<span>
+    				<a href="keranjang.php">Tas Belanja<i class="fas fa-shopping-cart ml-2"></i> 
+				<?php if (isset($_SESSION['login'])): ?>
+				<?php 
+    				$result = mysqli_query($koneksi,"SELECT * FROM keranjang WHERE userID = $userID");
+    				$cek = mysqli_num_rows($result);
+    			 ?>
+    					<?php if (!$cek == 0): ?>
+    					<span style="position: absolute; margin-left: -10px; margin-top: -7px;" class="badge badge-danger"><?= $cek; ?></span>
+    					<?php endif ?>
+    			<?php endif ?>
+    				</a>
+    			</span>
   			</div>	  	
 	  	</div>
 	</nav>
@@ -132,6 +151,11 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
       				<li class="nav-item">
         				<a href="infotentangkami.php">Tentang Kami</a>
       				</li>
+      				<?php if (isset($_SESSION['login'])): ?>
+	      				<li class="nav-item">
+	        				<a href="logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+	      				</li>
+      				<?php endif ?>
     			</ul>
     		</div>
 	   	</div>
@@ -149,9 +173,9 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
 			<div id="myCarousel" class="carousel slide" data-ride="carousel">
 				<!-- Carousel indicators -->
 				<ol class="carousel-indicators">
-					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-					<li data-target="#myCarousel" data-slide-to="1"></li>
-					<li data-target="#myCarousel" data-slide-to="2"></li>
+					<?php $indikator = 0; foreach ($testi as $a) { ?>
+						<li data-target="#myCarousel" data-slide-to="<?= $indikator; ?>" class="<?php if($indikator == 0){echo "active";} ?>"></li>
+					<?php $indikator++; } ?>
 				</ol>   
 				<!-- Wrapper for carousel items -->
 				<div class="carousel-inner">
@@ -161,23 +185,7 @@ $testi = tampil("SELECT * FROM testimoni, user WHERE user.userID = testimoni.use
 						foreach ($testi as $data) {
 					?>
 					<div class="item carousel-item <?php if($counter <= 1){echo "active";} ?>">
-						<div class="row">
-							<div class="col-sm-6">
-								<div class="media">
-									<div class="media-left d-flex mr-3">
-										<a href="detailproduk.php?Produk=<?= $data['produkID']; ?>">
-											<img src="admin/uploaded_files/<?= $data['Gambartesti']; ?>" alt="">
-										</a>
-									</div>
-									<div class="media-body">
-										<div class="testimonial">
-											<p><?= $data['Keterangan']; ?></p>
-											<p class="overview"><b><?= $data['nama']; ?></b>, Email : <?= $data['email']; ?></p>
-										</div>
-									</div>
-								</div>
-								<hr>							
-							</div>
+						<div class="row d-flex justify-content-center">
 							<div class="col-sm-6">
 								<div class="media">
 									<div class="media-left d-flex mr-3">

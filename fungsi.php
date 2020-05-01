@@ -1,5 +1,5 @@
 <?php 
-$koneksi = mysqli_connect("localhost","root","","db_avehijup");
+$koneksi = mysqli_connect("localhost","root","","u8823774_avehijup");
 
 // fungsi untuk menampilkan query
 function tampil($query){
@@ -43,7 +43,7 @@ function hapus($id){
 function tambah($data){
 	global $koneksi;
 	$ket = htmlspecialchars($data['testi']);
-	$produk = htmlspecialchars($data['testi']);
+	$produk = htmlspecialchars($data['produk']);
 	$userid = $_SESSION['userID'];
     $gambar = upload();
  	if (!$gambar) {
@@ -51,7 +51,7 @@ function tambah($data){
  	}
 	$query = "INSERT INTO testimoni
 				VALUES
-				('','$gambar','$ket','$userid','$produk','1')
+				('','$gambar','$ket','$userid','$produk','0')
 			";
 	mysqli_query($koneksi, $query);
 	return mysqli_affected_rows($koneksi);
@@ -88,8 +88,10 @@ function upload(){
 	        </script>";
 	      return false;
 	}
-	move_uploaded_file($tmpnama, 'admin/uploaded_files/'.$namafile);
-	return $namafile;
+	$namafilebaru = uniqid();
+	$namafilebaru .= '.'.$extensigambar;
+	move_uploaded_file($tmpnama, 'admin/uploaded_files/'.$namafilebaru);
+	return $namafilebaru;
 }
 
 
@@ -163,7 +165,6 @@ function uploadbukti(){
 	if ($error === 4) {
 			echo "<script>
 	       		alert('Gambar tidak ada!!!');
-     			document.location.href='konfirmasi.php';
 	        </script>";
 	      return false;
 	}
@@ -173,14 +174,12 @@ function uploadbukti(){
 	if (!in_array($extensigambar, $extensi)) {
 		echo "<script>
 	       		alert('Yang anda upload bukan gambar!!!');
-     			document.location.href='konfirmasi.php';
 	        </script>";
 	      return false;
 	}
 	if ($ukuran > 1000000) {
 		echo "<script>
 	       		alert('Ukuran gambar terlalu besar!!!');
-     			document.location.href='konfirmasi.php';
 	        </script>";
 	      return false;
 	}
@@ -190,10 +189,9 @@ function uploadbukti(){
 
 //fungsi cari produk
 function cari($keyword){
-	$keyword = $keyword['keyword'];
 	$query = "SELECT * FROM produk
 	WHERE
-	produk like '%$keyword%'
+	namaproduk like '%$keyword%'
 	";
 	return tampil($query);
 }

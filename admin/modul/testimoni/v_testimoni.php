@@ -57,9 +57,9 @@
                             </td>
                             <td class="text-center">
                                 <?php if($i['show_status'] == "1"){ ?>
-                                <a href="?pages=operasi_testimoni&operation=0&userID=<?php echo $i['userID'] ?>" class="btn btn-sm btn-danger"><i class="icofont-eye"></i></a>
+                                <a href="?pages=operasi_testimoni&operation=0&ID=<?php echo $i['testimoniID'] ?>" class="btn btn-sm btn-danger"><i class="icofont-eye"></i></a>
                                 <?php }else if($i['show_status'] == "0"){ ?>
-                                <a href="?pages=operasi_testimoni&operation=1&userID=<?php echo $i['userID'] ?>" class="btn btn-sm btn-primary"><i class="icofont-eye"></i></a>
+                                <a href="?pages=operasi_testimoni&operation=1&ID=<?php echo $i['testimoniID'] ?>" class="btn btn-sm btn-primary"><i class="icofont-eye"></i></a>
                                 <?php } ?>
                             </td>
                         </tr>
